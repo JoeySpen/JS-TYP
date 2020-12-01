@@ -9,9 +9,10 @@ fourcc = cv2.VideoWriter_fourcc('X', 'V', 'I', 'D')
 out = cv2.VideoWriter('output.avi', fourcc, 5.0, (1280, 720))
 
 ret, frame1 = cap.read()
+frame1 = cv2.resize(frame1,(480*2,360*2),fx=0,fy=0, interpolation = cv2.INTER_CUBIC)
 
-#winSize = (32,32) #default
-winSize = (cap.get(3), cap.get(4)) #joeytest
+winSize = (32,32) #default
+#winSize = (cap.get(3), cap.get(4)) #joeytest
 print("winsize: ", winSize)
 blockSize = (16,16) #default (16,16)
 blockStride = (8,8) #default 8,8
@@ -26,21 +27,23 @@ nlevels = 64  #Maximum number of detection window increases. Default 64
 signedGradients = True # Indicates signed gradient will be used or not.  Default false?
 
 #hog = cv2.HOGDescriptor(winSize, blockSize, blockStride, cellSize, nbins, derivAperture, winSigma, histogramNormType, L2HysThreshold, gammaCorrection, nlevels, signedGradients)
-#hog = cv2.HOGDescriptor()
-#hog = cv2.HOGDescriptor((32,64), (8,8), (4,4), (4,4), 9) #Works O.Kish
+#hog = cv2.HOGDescriptor() #Default settings
+hog = cv2.HOGDescriptor((64,128), (16,16), (8,8), (8,8), 9, 1 ) #Equivalent to default
+#hog = cv2.HOGDescriptor((32,64), (8,8), (4,4), (4,4), 9) #This worked well when I didn't resize the image, (half original params), better to make image 2x size?
 
-hog = cv2.HOGDescriptor()
 hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
 #hog.setSVMDetector(cv2.HOGDescriptor_getDaimlerPeopleDetector())
 
 while cap.isOpened():
   #gray = cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY)
   #frame1 = cv2.resize(frame1, (400, 400))
-  boxes, weights = hog.detectMultiScale(frame1, winStride=(3, 3),
+  boxes, weights = hog.detectMultiScale(frame1, winStride=(4, 4),
 		padding=(1, 1), scale=4)
   boxes = np.array([[x, y, x + w, y + h] for (x, y, w, h) in boxes])
-  print(len(boxes))
+  #print(len(boxes))
+  #print("Boxes:\n", boxes)
 
+  #Corners? :)
   for(xA, yA, xB, yB) in boxes:
     cv2.rectangle(frame1, (xA, yA), (xB, yB), (0, 255, 0), 2)
 
@@ -53,3 +56,4 @@ while cap.isOpened():
 
 
   ret, frame1 = cap.read()
+  frame1 = cv2.resize(frame1,(480*2,360*2),fx=0,fy=0, interpolation = cv2.INTER_CUBIC)
