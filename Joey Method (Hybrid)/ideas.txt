@@ -1,0 +1,8 @@
+1)Begin tracking with movement
+2)When box disapears check that region of interest vs background
+3)If contour found, add box
+
+Should continue to track stationary people?
+How do we handle having two people?
+
+Background reduction algorithm?
