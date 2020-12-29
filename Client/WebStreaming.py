@@ -12,6 +12,7 @@ import cv2
 from copy import deepcopy
 
 # python webstreaming.py --ip 192.168.0.74 --port 8000
+# http://camera.butovo.com/mjpg/video.mjpg
 
 # Initialise output frame and a lock to allow
 # thread safe exchange of output frames
@@ -122,6 +123,13 @@ def video_feed():
     # return the response generated along with specific media type
     return Response(generate(),
                     mimetype="multipart/x-mixed-replace; boundary=frame")
+
+
+@app.route("/single.jpg")
+def single():
+    global outputFrame
+    (flag, encodedImage) = cv2.imencode(".jpg", outputFrame)
+    return Response(bytearray(encodedImage), mimetype="image/jpg")
 
 
 @app.route("/boxes")
