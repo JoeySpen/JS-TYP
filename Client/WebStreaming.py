@@ -9,6 +9,9 @@ import datetime
 import imutils
 import time
 import cv2
+from copy import deepcopy
+
+# python webstreaming.py --ip 192.168.0.74 --port 8000
 
 # Initialise output frame and a lock to allow
 # thread safe exchange of output frames
@@ -17,6 +20,9 @@ lock = threading.Lock()
 
 # Initialize a flask object
 app = Flask(__name__)
+
+# Initialize boxes
+box = (0, 0, 0, 0)
 
 # Initialize the video stream and allow camera to warmup
 # vs = VideoStream(usePiCamera=1).start()
@@ -33,7 +39,7 @@ def index():
 
 def detect_motion(frameCount):
     # Grab global references to video stream output and lock
-    global vs, outputFrame, lock
+    global vs, outputFrame, lock, box
 
     # Initialise motion detector and number of frames
     md = SingleMotionDetector(accumWeight=0.1)
@@ -62,8 +68,10 @@ def detect_motion(frameCount):
             if motion is not None:
                 # Unpack tuple and draw box surrounding motion area
                 (thresh, (minX, minY, maxX, maxY)) = motion
-                cv2.rectangle(frame, (minX, minY), (maxX, maxY),
-                              (0, 0, 255), 2)
+                # cv2.rectangle(frame, (minX, minY), (maxX, maxY),
+                #              (0, 0, 255), 2)
+                box = (minX, minY, maxX, maxY)
+
 
         # Update background model and increment total num
         # of frames read thus far
@@ -102,11 +110,43 @@ def generate():
               bytearray(encodedImage) + b'\r\n')
 
 
+def getBoxes():
+    global box
+    while True:
+        yield box
+
+
+
 @app.route("/video_feed")
 def video_feed():
-    # return the resposne generated along with specific media type
+    # return the response generated along with specific media type
     return Response(generate(),
                     mimetype="multipart/x-mixed-replace; boundary=frame")
+
+
+@app.route("/boxes")
+def boxes():
+    def generate():
+        lastBox = None
+        while True:
+            global box
+            if lastBox == box:
+                break
+            rsp = 'First: {0[0]}, Second: {0[1]}, Third: {0[2]} Third: {0[3]}\n'.format(box)
+            lastBox = deepcopy(box)
+            yield rsp
+    #val = getBoxes().__next__()
+    #global box
+    #return Response(rsp, mimetype="text")
+    return Response(generate(), mimetype="text")
+
+    
+# @app.route('/large')
+# def generate_large_csv():
+#     def generate():
+#         for i in range(0,1000000):
+#             yield ','.join("bob") + '\n'
+#     return Response(generate(), mimetype='text')
 
 
 # If main
