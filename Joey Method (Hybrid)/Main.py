@@ -40,7 +40,7 @@ while cap.isOpened():
 
     currentBoxes = []
 
-    #For each countour
+    #For each countour, check size, draw rectangle and add to list of boxes
     for contour in contours:
         (x, y, w, h) = cv2.boundingRect(contour)
         if cv2.contourArea(contour) > 900:
@@ -55,7 +55,7 @@ while cap.isOpened():
             matched = False
             for currentBox in currentBoxes:
                 count+=1
-                if overlap(currentBox, previousBox):
+                if overlap(currentBox, previousBox): #This may need to be more rigorous than checking a simple overlap...
                     matched = True
 
             #No match, did someone stand still?
