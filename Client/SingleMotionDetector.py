@@ -51,5 +51,4 @@ class SingleMotionDetector:
 
         # Otherwise return a tuple of the thresholded image
         # along with bounding box
-        return (thresh, (minX, minY, maxX, maxY))   
-
+        return (thresh, (minX, minY, maxX, maxY))

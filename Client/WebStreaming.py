@@ -11,6 +11,7 @@ import time
 import cv2
 from copy import deepcopy
 from flask import request
+from VisionAlgorithms.Motion import Motion
 
 # python webstreaming.py --ip 192.168.0.74 --port 8000
 # http://camera.butovo.com/mjpg/video.mjpg
@@ -25,6 +26,9 @@ app = Flask(__name__)
 
 # Initialize boxes
 box = (0, 0, 0, 0)
+
+#Minimum size for contours
+minSize = 900
 
 # Initialize the video stream and allow camera to warmup
 # vs = VideoStream(usePiCamera=1).start()
@@ -44,16 +48,18 @@ def detect_motion(frameCount):
     global vs, outputFrame, lock, box
 
     # Initialise motion detector and number of frames
-    md = SingleMotionDetector(accumWeight=0.1)
+    # md = SingleMotionDetector(accumWeight=0.1)
+    md = Motion(accumWeight=0.1)
     total = 0
 
     # Loop over frames from video stream
     while True:
         # Read next frame from stream, resize convert and blur
         frame = vs.read()
+        
         frame = imutils.resize(frame, width=400)
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        gray = cv2.GaussianBlur(gray, (7, 7), 0)
+        # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        # gray = cv2.GaussianBlur(gray, (7, 7), 0) #TODO Do this stuff in the respective motion technique
 
         # Grab current timestamp and draw to frame
         timestamp = datetime.datetime.now()
@@ -64,20 +70,31 @@ def detect_motion(frameCount):
         # If total frames sufficient to construct background model
         # Continue to process frame
         if total > frameCount:
-            motion = md.detect(gray)
+            #motion = md.detect(frame)
+            contours = md.detect(frame)
+
+            if contours is None:
+                continue
+
+            for contour in contours:
+                if cv2.contourArea(contour) < minSize:
+                    continue
+                (x, y, w, h) = cv2.boundingRect(contour)
+                cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 255), 2)
+
 
             # Check if we found motion
-            if motion is not None:
+            #if motion is not None:
                 # Unpack tuple and draw box surrounding motion area
-                (thresh, (minX, minY, maxX, maxY)) = motion
-                cv2.rectangle(frame, (minX, minY), (maxX, maxY),
-                              (0, 0, 255), 2)
-                box = (minX, minY, maxX, maxY)
+                #(thresh, (minX, minY, maxX, maxY)) = motion
+                #cv2.rectangle(frame, (minX, minY), (maxX, maxY),
+                 #             (0, 0, 255), 2)
+                #box = (minX, minY, maxX, maxY)
 
 
         # Update background model and increment total num
         # of frames read thus far
-        md.update(gray)
+        md.update(frame) #md.update(gray)
         total += 1
 
         # cv2.imshow("feed", frame)
@@ -97,7 +114,7 @@ def generate():
         with lock:
             # Check output frame is available, otherwise skip
             if outputFrame is None:
-                # print("No frame")
+                #print("No frame")
                 continue
 
             # Encode frame in JPEG format
