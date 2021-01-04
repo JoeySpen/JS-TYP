@@ -12,6 +12,7 @@ import cv2
 from copy import deepcopy
 from flask import request
 from VisionAlgorithms.Motion import Motion
+from VisionAlgorithms.HOG import HOG
 
 # python webstreaming.py --ip 192.168.0.74 --port 8000
 # http://camera.butovo.com/mjpg/video.mjpg
@@ -27,7 +28,7 @@ app = Flask(__name__)
 # Initialize boxes
 box = (0, 0, 0, 0)
 
-#Minimum size for contours
+# Minimum size for contours
 minSize = 900
 
 # Initialize the video stream and allow camera to warmup
@@ -49,17 +50,19 @@ def detect_motion(frameCount):
 
     # Initialise motion detector and number of frames
     # md = SingleMotionDetector(accumWeight=0.1)
-    md = Motion(accumWeight=0.1)
+    # md = Motion(accumWeight=0.1)
+    md = HOG()
     total = 0
 
     # Loop over frames from video stream
     while True:
         # Read next frame from stream, resize convert and blur
         frame = vs.read()
-        
         frame = imutils.resize(frame, width=400)
+
         # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        # gray = cv2.GaussianBlur(gray, (7, 7), 0) #TODO Do this stuff in the respective motion technique
+        # gray = cv2.GaussianBlur(gray, (7, 7), 0)
+        # #TODO Do this stuff in the respective motion technique
 
         # Grab current timestamp and draw to frame
         timestamp = datetime.datetime.now()
@@ -70,31 +73,30 @@ def detect_motion(frameCount):
         # If total frames sufficient to construct background model
         # Continue to process frame
         if total > frameCount:
-            #motion = md.detect(frame)
-            contours = md.detect(frame)
+            # motion = md.detect(frame)
+            detections = md.detect(frame)
 
-            if contours is None:
+            if detections is None:
                 continue
 
-            for contour in contours:
-                if cv2.contourArea(contour) < minSize:
-                    continue
-                (x, y, w, h) = cv2.boundingRect(contour)
+            box = detections
+
+            for detect in detections:
+                (x, y, w, h) = detect
+                # box.append((x, y, w, h))
                 cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 255), 2)
 
-
             # Check if we found motion
-            #if motion is not None:
+            # if motion is not None:
                 # Unpack tuple and draw box surrounding motion area
-                #(thresh, (minX, minY, maxX, maxY)) = motion
-                #cv2.rectangle(frame, (minX, minY), (maxX, maxY),
-                 #             (0, 0, 255), 2)
-                #box = (minX, minY, maxX, maxY)
-
+                # (thresh, (minX, minY, maxX, maxY)) = motion
+                # cv2.rectangle(frame, (minX, minY), (maxX, maxY),
+                #             (0, 0, 255), 2)
+                # box = (minX, minY, maxX, maxY)
 
         # Update background model and increment total num
         # of frames read thus far
-        md.update(frame) #md.update(gray)
+        md.update(frame)  # md.update(gray)
         total += 1
 
         # cv2.imshow("feed", frame)
@@ -114,7 +116,7 @@ def generate():
         with lock:
             # Check output frame is available, otherwise skip
             if outputFrame is None:
-                #print("No frame")
+                # print("No frame")
                 continue
 
             # Encode frame in JPEG format
@@ -151,19 +153,22 @@ def single():
 
 @app.route("/boxes")
 def boxes():
-    def generate():
-        lastBox = None
-        while True:
-            global box
-            if lastBox == box:
-                break
-            rsp = '{0[0]},{0[1]},{0[2]},{0[3]}'.format(box)
-            lastBox = deepcopy(box)
-            yield rsp
+    global box
+    print(box)
+    
+    # def generate():
+    #     lastBox = None
+    #     while True:
+    #         global box
+    #         if lastBox == box:
+    #             break
+    #         rsp = '{0[0]},{0[1]},{0[2]},{0[3]}'.format(box)
+    #         lastBox = deepcopy(box)
+    #         yield rsp
     # val = getBoxes().__next__()
     # global box
     # return Response(rsp, mimetype="text")
-    return Response(generate(), mimetype="text")
+    return Response(str(box), mimetype="text")
 
 # @app.route('/large')
 # def generate_large_csv():
@@ -176,7 +181,7 @@ def boxes():
 # Deal with form request to change parameters
 @app.route('/submit', methods=['GET', 'POST'])
 def handle_request():
-    #print("Got request?")
+    # print("Got request?")
     print(request.form)
     return index()
 

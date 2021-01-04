@@ -7,6 +7,7 @@ class Motion:
     def __init__(self, accumWeight=0.5):
         print("Initialising Motion")
         self.prev = None
+        self.minSize = 900
 
     def update(self, image):
         return None
@@ -29,12 +30,20 @@ class Motion:
         contours, _ = cv2.findContours(dilated, cv2.RETR_TREE,
                                        cv2.CHAIN_APPROX_SIMPLE)
 
-        #for contour in contours:
-            #(x, y, w, h) = cv2.boundingRect(contour)
+        if len(contours) == 0:
+            return None
 
-            #if cv2.contourArea(contour) < 900:
-                #contours.remove(contour)
-                #continue
+        detections = []
+
+        for contour in contours:
+            if cv2.contourArea(contour) < 900:
+                continue
+            rect = cv2.boundingRect(contour)
+            detections.append(rect)
+        
+        return detections
+
+            
 
         #(minX, minY) = (np.inf, np.inf)
         #maxX, maxY = (-np.inf, -np.inf)
