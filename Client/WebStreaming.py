@@ -13,6 +13,7 @@ from copy import deepcopy
 from flask import request
 from VisionAlgorithms.Motion import Motion
 from VisionAlgorithms.HOG import HOG
+# from DiscordReporter import DiscordReporter
 
 # python webstreaming.py --ip 192.168.0.74 --port 8000
 # http://camera.butovo.com/mjpg/video.mjpg
@@ -37,6 +38,11 @@ vs = VideoStream(src=0).start()
 # vs = cv2.VideoCapture(0)
 time.sleep(1)
 
+t = None
+
+md = None
+
+discordReporter = None
 
 @app.route("/")
 def index():
@@ -46,7 +52,7 @@ def index():
 
 def detect_motion(frameCount):
     # Grab global references to video stream output and lock
-    global vs, outputFrame, lock, box
+    global vs, outputFrame, lock, box, md
 
     # Initialise motion detector and number of frames
     # md = SingleMotionDetector(accumWeight=0.1)
@@ -155,7 +161,7 @@ def single():
 def boxes():
     global box
     print(box)
-    
+
     # def generate():
     #     lastBox = None
     #     while True:
@@ -181,8 +187,16 @@ def boxes():
 # Deal with form request to change parameters
 @app.route('/submit', methods=['GET', 'POST'])
 def handle_request():
+    global md
     # print("Got request?")
     print(request.form)
+    if request.form["DetectType"] == "motion":
+        print("Changing to motion detection!")
+        md = Motion()
+    elif request.form["DetectType"] == "people":
+        md = HOG()
+    elif request.form["DetectType"] == "objects":
+        md = SingleMotionDetector(accumWeight=0.1)
     return index()
 
 
@@ -203,8 +217,10 @@ if __name__ == '__main__':
     t.daemon = True
     t.start()
 
+
     # Start the flask app
     app.run(host=args["ip"], port=args["port"], debug=True,
             threaded=True, use_reloader=False)
+
 
 vs.stop()

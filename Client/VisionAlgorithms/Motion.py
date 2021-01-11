@@ -4,7 +4,7 @@ import cv2
 
 class Motion:
 
-    def __init__(self, accumWeight=0.5):
+    def __init__(self):
         print("Initialising Motion")
         self.prev = None
         self.minSize = 900

@@ -6,20 +6,20 @@ class HOG:
 
     def __init__(self):
         print("Initialising HOG")
-        winSize = (32,32) #default
-        #winSize = (cap.get(3), cap.get(4)) #joeytest
-        print("winsize: ", winSize)
-        blockSize = (16,16) #default (16,16)
-        blockStride = (8,8) #default 8,8
-        cellSize = (8, 8) #default 8,8
-        nbins = 9 #Number of bins used in calculation of histogram gradients. Default 9
-        derivAperture = 1 #Not documented... default 1
-        winSigma = -1 #Gausian smoothing window parameter, default -1
-        histogramNormType = 0  #??? default 0?
-        L2HysThreshold = 0.2 #l2 normalization method shrinkage default 0.2
-        gammaCorrection = 1 #Flag to specify whether the gamma correction preprocessing is required or not. Default false?
-        nlevels = 64  #Maximum number of detection window increases. Default 64
-        signedGradients = True # Indicates signed gradient will be used or not.  Default false?
+        # winSize = (32,32) #default
+        # winSize = (cap.get(3), cap.get(4)) #joeytest
+        # print("winsize: ", winSize)
+        # blockSize = (16,16) #default (16,16)
+        # blockStride = (8,8) #default 8,8
+        # cellSize = (8, 8) #default 8,8
+        # nbins = 9 #Number of bins used in calculation of histogram gradients. Default 9
+        # derivAperture = 1 #Not documented... default 1
+        # winSigma = -1 #Gausian smoothing window parameter, default -1
+        # histogramNormType = 0  #??? default 0?
+        # L2HysThreshold = 0.2 #l2 normalization method shrinkage default 0.2
+        # gammaCorrection = 1 #Flag to specify whether the gamma correction preprocessing is required or not. Default false?
+        # nlevels = 64  #Maximum number of detection window increases. Default 64
+        # signedGradients = True # Indicates signed gradient will be used or not.  Default false?
 
         #hog = cv2.HOGDescriptor(winSize, blockSize, blockStride, cellSize, nbins, derivAperture, winSigma, histogramNormType, L2HysThreshold, gammaCorrection, nlevels, signedGradients)
         #hog = cv2.HOGDescriptor() #Default settings
