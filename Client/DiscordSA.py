@@ -5,7 +5,7 @@ import io
 import aiohttp
 from dotenv import load_dotenv
 
-# python DiscordSA.py --ip 192.168.0.74 --port 8000
+# python DiscordSA.py --ip 192.168.56.1 --port 8000
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -25,6 +25,7 @@ args = vars(ap.parse_args())
 serverLocation = "http://" + str(args["ip"]) + ":" + str(args["port"])
 
 print("Server location: " + serverLocation)
+
 
 @client.event
 async def on_ready():
@@ -55,6 +56,7 @@ async def on_message(message):
         async with aiohttp.ClientSession() as session:
             # Request image
             async with session.get(serverLocation + "/single.jpg") as resp:
+
                 # No image found!
                 if resp.status != 200:
                     return await channel.send('Could not download file...')
@@ -62,5 +64,19 @@ async def on_message(message):
                 # Read response and send data to channel
                 data = io.BytesIO(await resp.read())
                 await channel.send(file=discord.File(data, 'screenshot.jpg'))
+
+    # User asked for boxes
+    if message.content == '!boxes':
+        async with aiohttp.ClientSession() as session:
+            async with session.get(serverLocation + "/boxes") as resp:
+
+                # Nothing found
+                if resp.status != 200:
+                    return await channel.send('Could not download file...')
+
+                # "utf-8" part removes b'<data>' and automatically formats
+                data = str(await resp.read(), "utf-8")
+                channel = client.get_channel(797955245665157152)
+                await channel.send(data)
 
 client.run(TOKEN)

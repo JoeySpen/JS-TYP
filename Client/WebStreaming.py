@@ -15,7 +15,7 @@ from VisionAlgorithms.Motion import Motion
 from VisionAlgorithms.HOG import HOG
 # from DiscordReporter import DiscordReporter
 
-# python webstreaming.py --ip 192.168.0.74 --port 8000
+# python webstreaming.py --ip 192.168.56.1 --port 8000
 # http://camera.butovo.com/mjpg/video.mjpg
 
 # Initialise output frame and a lock to allow
