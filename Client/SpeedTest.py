@@ -2,6 +2,7 @@ from datetime import datetime
 import cv2
 from VisionAlgorithms.Motion import Motion
 from VisionAlgorithms.HOG import HOG
+from VisionAlgorithms.YOLO.YOLO import YOLO
 
 
 # Draws a list of detections to a frame
@@ -14,7 +15,7 @@ def draw(detections, frame):
         cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 255), 2)
 
 
-mvAlgos = [Motion(), HOG()]
+mvAlgos = [YOLO(), HOG(), Motion()]
 testVid = cv2.VideoCapture('testVids/vtest.mp4')
 frame = None
 frameCount = 0
@@ -40,8 +41,8 @@ for algo in mvAlgos:
 
         detections = algo.detect(frame)
         # draw(detections, frame)
-        # cv2.imshow("frame", frame)
-        # cv2.waitKey(1)
+        cv2.imshow("frame", frame)
+        cv2.waitKey(1)
         frameCount += 1
 
 testVid.release()

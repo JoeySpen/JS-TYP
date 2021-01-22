@@ -31,9 +31,9 @@
         </div>
         
         
-        <form action = "/submit" method="post"></form>
+        <form action = "/submit" class="col-6 col-md-4 " method="post">
         
-        <div class="container-fluid col-6 col-md-4 form-border">
+        <div class="container-fluid form-border">
           <h3> Vision App Settings</h3>
           <!-- Box toggle -->
             <p> Show Boxes? </p>
@@ -49,7 +49,7 @@
             
             
           <!-- Merge boxes or not -->
-          <div class="form-group col-4">
+          <div class="form-group">
             <p> Seperate boxes or merge them? </p>
             <input type="radio" id="MergeBoxesYes" name="MergeBoxes" value="yes">
             <label for="BoxToggleYes">Merge</label><br>
@@ -59,7 +59,7 @@
           </div>
           
           <!-- Detect type -->
-          <div class="form-group col-4">
+          <div class="form-group">
             <p> Detect </p>
             <input type="radio" id="DetectTypePeople" name="DetectType" value="people">
             <label for="DetectTypePeople">People</label><br>
@@ -69,6 +69,11 @@
       
             <input type="radio" id="DetectTypeMotion" name="DetectType" value="motion">
             <label for="DetectTypeMotion">Motion</label><br>
+
+            <input type="radio" id="DetectTypeMotion" name="DetectType" value="YOLO">
+            <label for="DetectTypeMotion">YOLO (Slow but accurate!)</label><br>
+
+            
           </div>
 
           

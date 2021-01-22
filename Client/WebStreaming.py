@@ -13,6 +13,7 @@ from copy import deepcopy
 from flask import request
 from VisionAlgorithms.Motion import Motion
 from VisionAlgorithms.HOG import HOG
+from VisionAlgorithms.YOLO.YOLO import YOLO
 # from DiscordReporter import DiscordReporter
 
 # python webstreaming.py --ip 192.168.56.1 --port 8000
@@ -197,6 +198,8 @@ def handle_request():
         md = HOG()
     elif request.form["DetectType"] == "objects":
         md = SingleMotionDetector(accumWeight=0.1)
+    elif request.form["DetectType"] == "YOLO":
+        md = YOLO()
     return index()
 
 
