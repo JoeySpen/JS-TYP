@@ -18,7 +18,7 @@ class Motion:
             return
         diff = cv2.absdiff(self.prev, image)
         self.prev = image.copy()
-        #frame1 = image.copy()
+        # frame1 = image.copy()
         gray = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
         blur = cv2.GaussianBlur(gray, (5, 5), 0)
 
