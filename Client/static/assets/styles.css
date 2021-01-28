@@ -96,9 +96,36 @@ ul li {
 }
 
 .form-border {
-	border-color: rgb(50, 54, 56);
+	border-color: rgb(95, 95, 95);
 	border-width: .2rem;
 	border-style: solid;
 	border-radius: 2rem;
-	background-color: #afafaf;
+	background-color: rgb(199, 199, 199);
+	padding-left: 0;
+	padding-right: 0;
+
+}
+
+.but-col{
+	padding: 0;
+	padding-bottom: 15px;
+	
+}
+
+
+.but-selected{
+	background-color: #00eb3b !important; 
+	border-color: #8ae5a1 !important;
+	/*border-radius: 2rem;*/
+	box-shadow: 0 0 20px 10px #ffffffdc;
+}
+
+.but-grey{
+	background-color: #b1b1b1 !important; 
+	border-color: #818181 !important;
+	box-shadow: 0 0 20px 2px #222222dc;
+}
+
+.dropme{
+	width: 100%;
 }
