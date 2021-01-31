@@ -1,6 +1,5 @@
 import numpy as np
 import cv2
-import time
 
 
 class YOLO:
@@ -30,6 +29,9 @@ class YOLO:
         self.ln = self.net.getLayerNames()
         self.ln = [self.ln[i[0] - 1] for i in self.net.getUnconnectedOutLayers()]
 
+        self.peopleOnly = True
+        
+
     def update(self, image):
         return None
 
@@ -39,13 +41,7 @@ class YOLO:
 
         blob = cv2.dnn.blobFromImage(frame1, 1 / 255.0, (416, 416), swapRB=True, crop=False)
         self.net.setInput(blob)
-        start = time.time()
         layerOutputs = self.net.forward(self.ln)
-        end = time.time()
-        end = end - start
-
-        #print("Yolo took ", end, " seconds")
-
         boxes = []
         confidences = []
         classIDs = []
@@ -60,6 +56,10 @@ class YOLO:
                     box = detection[0:4] * np.array([W, H, W, H])
                     (centerX, centerY, width, height) = box.astype("int")
 
+                    # Skip if not person and set to peopleonly
+                    if classID != 0 and self.peopleOnly:
+                        continue
+
                     x = int(centerX - (width/2))
                     y = int(centerY - (height/2))
 
@@ -69,7 +69,6 @@ class YOLO:
 
         idxs = cv2.dnn.NMSBoxes(boxes, confidences, self.confidenceMin, self.thresholdMin)
 
-        print(idxs)
         result = []
         if len(idxs) > 0:
             for i in idxs.flatten():
