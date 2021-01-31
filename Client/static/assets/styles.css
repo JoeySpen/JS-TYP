@@ -36,7 +36,7 @@ ul li {
     --secondary: #874DF1; /* var(--secondary) */
     --tertiary:  #F5A55E; /* var(--tertiary) */
     --title:     #4D4D4D; /* var(--title) */
-    --text:      #8E8E8E; /* var(--text) */
+    --text:      #000000; /* var(--text) */
 }
 
 .c-primary   { color: var(--primary); }
@@ -52,8 +52,11 @@ ul li {
 .bgc-tertiary  { background-color: var(--tertiary); }
 .bgc-title     { background-color: var(--title); }
 .bgc-text      { background-color: var(--text); }
+.bgc-green      { background-color:  #3cdd0b; }
 .bgc-white     { background-color: #FFFFFF; }
 .bgc-black     { background-color: #000000; }
+
+
 
 /* Titles */
 .title {
@@ -96,11 +99,11 @@ ul li {
 }
 
 .form-border {
-	border-color: rgb(95, 95, 95);
+	border-color: rgb(214, 214, 214);
 	border-width: .2rem;
 	border-style: solid;
 	border-radius: 2rem;
-	background-color: rgb(199, 199, 199);
+	background-color: rgb(233, 233, 233);
 	padding-left: 0;
 	padding-right: 0;
 
@@ -114,7 +117,7 @@ ul li {
 
 
 .but-selected{
-	background-color: #00eb3b !important; 
+	background-color: #7adb92 !important; 
 	border-color: #8ae5a1 !important;
 	/*border-radius: 2rem;*/
 	box-shadow: 0 0 20px 10px #ffffffdc;
@@ -129,3 +132,163 @@ ul li {
 .dropme{
 	width: 100%;
 }
+
+.rightSide{
+	position: absolute;
+    right: 10;
+    bottom: auto;
+    top: 15;
+}
+
+
+.collapseable{
+	background-color: #318fee;
+    border-color: #1b75be;
+}
+
+.collapsed{
+	background-color: #f8f9fa;
+    border-color: #f8f9fa;
+
+}
+
+
+/* borrowed **********************************************/
+.inputGroup{
+	background-color: #fff;
+    display: block;
+    margin: 10px 0;
+    position: relative;
+}
+
+.inputLabel{
+	padding: 12px 30px;
+      width: 100%;
+      display: block;
+      text-align: left;
+      color: #3C454C;
+      cursor: pointer;
+      position: relative;
+      z-index: 2;
+      transition: color 200ms ease-in;
+	  overflow: hidden;
+	  
+}
+
+
+.checkMe{
+	width: 32px;
+        height: 32px;
+        content: '';
+        border: 2px solid #D1D7DC;
+        background-color: #fff;
+        background-repeat: no-repeat;
+        background-position: 2px 3px;
+        border-radius: 50%;
+        z-index: 2;
+        position: absolute;
+        right: 30px;
+        top: 50%;
+        transform: translateY(-50%);
+        cursor: pointer;
+        transition: all 200ms ease-in;
+}
+
+.checkMe:checked{
+	color: #fff;
+}
+
+.inputLabel:checked{
+	color: rgb(0, 0, 0);
+}
+
+
+.checkMe:checked::after{
+	background-color: #54E0C7;
+	border-color: #54E0C7;
+}
+
+.slideContainer{
+	max-width: 100%;
+	
+}
+	
+/******************* BORROWED *******************/
+.inputGroup {
+	background-color: #fff;
+	display: block;
+	margin: 10px 0;
+	position: relative;
+}
+.inputGroup label {
+	padding: 12px 30px;
+	width: 100%;
+	display: block;
+	text-align: left;
+	color: #3c454c;
+	cursor: pointer;
+	position: relative;
+	z-index: 2;
+	transition: color 200ms ease-in;
+	overflow: hidden;
+}
+.inputGroup label:before {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	content: '';
+	background-color: #5562eb;
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%) scale3d(1, 1, 1);
+	transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+	opacity: 0;
+	z-index: -1;
+}
+.inputGroup label:after {
+	width: 32px;
+	height: 32px;
+	content: '';
+	border: 2px solid #d1d7dc;
+	background-color: #fff;
+	background-image: url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.414 11L4 12.414l5.414 5.414L20.828 6.414 19.414 5l-10 10z' fill='%23fff' fill-rule='nonzero'/%3E%3C/svg%3E ");
+	background-repeat: no-repeat;
+	background-position: 2px 3px;
+	border-radius: 50%;
+	z-index: 2;
+	position: absolute;
+	right: 30px;
+	top: 50%;
+	transform: translateY(-50%);
+	cursor: pointer;
+	transition: all 200ms ease-in;
+}
+.inputGroup input:checked ~ label {
+	color: #fff;
+}
+.inputGroup input:checked ~ label:before {
+	transform: translate(-50%, -50%) scale3d(56, 56, 1);
+	opacity: 1;
+}
+.inputGroup input:checked ~ label:after {
+	background-color: #54e0c7;
+	border-color: #54e0c7;
+}
+.inputGroup input {
+	width: 32px;
+	height: 32px;
+	order: 1;
+	z-index: 2;
+	position: absolute;
+	right: 30px;
+	top: 50%;
+	transform: translateY(-50%);
+	cursor: pointer;
+	visibility: hidden;
+}
+body {
+	background-color: #d1d7dc;
+	font-family: 'Fira Sans', sans-serif;
+}
+

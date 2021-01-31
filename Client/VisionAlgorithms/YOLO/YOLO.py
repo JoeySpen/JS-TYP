@@ -67,24 +67,24 @@ class YOLO:
                     confidences.append(float(confidence))
                     classIDs.append(classID)
 
-            idxs = cv2.dnn.NMSBoxes(boxes, confidences, self.confidenceMin, self.thresholdMin)
+        idxs = cv2.dnn.NMSBoxes(boxes, confidences, self.confidenceMin, self.thresholdMin)
 
-            print(idxs)
-            result = []
-            if len(idxs) > 0:
-                for i in idxs.flatten():
-                    result.append(boxes[i])
-            return result
+        print(idxs)
+        result = []
+        if len(idxs) > 0:
+            for i in idxs.flatten():
+                result.append(boxes[i])
+        return result
 
-            # Draw to image
-            if len(idxs) > 0:
-                for i in idxs.flatten():
-                    # extract the bounding box coordinates
-                    (x, y) = (boxes[i][0], boxes[i][1])
-                    (w, h) = (boxes[i][2], boxes[i][3])
+        # Draw to image
+        if len(idxs) > 0:
+            for i in idxs.flatten():
+                # extract the bounding box coordinates
+                (x, y) = (boxes[i][0], boxes[i][1])
+                (w, h) = (boxes[i][2], boxes[i][3])
 
-                    # draw a bounding box rectangle and label on the image
-                    color = [int(c) for c in self.COLORS[classIDs[i]]]
-                    cv2.rectangle(frame1, (x, y), (x + w, y + h), color, 2)
-                    text = "{}: {:.4f}".format(self.LABELS[classIDs[i]], confidences[i])
-                    cv2.putText(frame1, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+                # draw a bounding box rectangle and label on the image
+                color = [int(c) for c in self.COLORS[classIDs[i]]]
+                cv2.rectangle(frame1, (x, y), (x + w, y + h), color, 2)
+                text = "{}: {:.4f}".format(self.LABELS[classIDs[i]], confidences[i])
+                cv2.putText(frame1, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)

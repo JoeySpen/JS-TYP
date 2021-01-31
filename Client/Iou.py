@@ -5,20 +5,30 @@ from VisionAlgorithms.HOG import HOG
 from VisionAlgorithms.YOLO.YOLO import YOLO
 
 
-# Draws a list of detections to a frame
-def draw(detections, frame):
+def getIOU(box1, box2):
+    xOverlap = max(min(box1[2], box2[2] - max(box1[0], box2[0])))
+    yOverlap = max(min(box1[3], box2[3] - max(box1[1], box2[1])))
+    overlapArea = xOverlap * yOverlap
+    return overlapArea
+
+
+def draw(detections, frame, colour):
     if detections is None:
         return
 
     for detect in detections:
         (x, y, w, h) = detect
-        cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 255), 2)
+        cv2.rectangle(frame, (x, y), (x+w, y+h), colour, 2)
 
 
-mvAlgos = [YOLO(), HOG(), Motion()]
+mvAlgos = [Motion(), HOG()]
+YOLO = YOLO()
 testVid = cv2.VideoCapture('testVids/vtest.mp4')
 frame = None
 frameCount = 0
+
+yoloColour = (0, 0, 255)
+testColour = (0, 255, 0)
 
 for algo in mvAlgos:
     testVid.release()
@@ -31,6 +41,7 @@ for algo in mvAlgos:
     while True:
         ret, frame = testVid.read()
 
+        # End of video
         if not ret:
             print("Done")
             endTime = datetime.now()
@@ -39,12 +50,12 @@ for algo in mvAlgos:
                   "\tframes processed: ", frameCount)
             break
 
-        detections = algo.detect(frame)
-        draw(detections, frame)
+        #detections = algo.detect(frame)
+        yoloDetections = YOLO.detect(frame)
+        #draw(detections, frame, testColour)
+        draw(yoloDetections, frame, yoloColour)
         cv2.imshow("frame", frame)
         cv2.waitKey(0)
         frameCount += 1
 
 testVid.release()
-
-print("Tested ", frameCount, " frames!")
