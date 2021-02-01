@@ -47,7 +47,7 @@ def draw(detections, frame, colour):
         cv2.rectangle(frame, (x, y), (x+w, y+h), colour, 2)
 
 
-mvAlgos = [Motion(), HOG()]
+mvAlgos = [HOG()]
 YOLO = YOLO()
 testVid = cv2.VideoCapture('testVids/vtest.mp4')
 frame = None
@@ -56,35 +56,27 @@ frameCount = 0
 yoloColour = (0, 0, 255)
 testColour = (0, 255, 0)
 
-for algo in mvAlgos:
-    testVid.release()
-    testVid = cv2.VideoCapture('testVids/vtest.mp4')
-    frame = None
-    frameCount = 0
-    print("Testing algorithm...")
-    startTime = datetime.now()
+testVid.release()
+testVid = cv2.VideoCapture('testVids/vtest.mp4')
+frame = None
 
-    while True:
-        ret, frame = testVid.read()
+while True:
+    ret, frame = testVid.read()
 
-        # End of video
-        if not ret:
-            print("Done")
-            endTime = datetime.now()
-            elapsedTime = endTime - startTime
-            print("Elapsed time:", elapsedTime,
-                  "\tframes processed: ", frameCount)
-            break
+    # End of video
+    if not ret:
+        print("End of video")
+        break
 
+    yoloDetections = YOLO.detect(frame)
+    draw(yoloDetections, frame, yoloColour)
+
+    for algo in mvAlgos:
         detections = algo.detect(frame)
-        yoloDetections = YOLO.detect(frame)
         draw(detections, frame, testColour)
-        draw(yoloDetections, frame, yoloColour)
 
         if detections is None or yoloDetections is None:
             continue
-
-        #best = 0
 
         best = []
         count = 0
@@ -97,8 +89,7 @@ for algo in mvAlgos:
 
         print("Best:", best)
 
-        cv2.imshow("frame", frame)
-        cv2.waitKey(0)
-        frameCount += 1
+    cv2.imshow("frame", frame)
+    cv2.waitKey(0)
 
 testVid.release()
