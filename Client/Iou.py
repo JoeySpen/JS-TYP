@@ -3,6 +3,7 @@ import cv2
 from VisionAlgorithms.Motion import Motion
 from VisionAlgorithms.HOG import HOG
 from VisionAlgorithms.YOLO.YOLO import YOLO
+import numpy as np
 
 
 def getIOU(box1, box2):
@@ -47,14 +48,21 @@ def draw(detections, frame, colour):
         cv2.rectangle(frame, (x, y), (x+w, y+h), colour, 2)
 
 
-mvAlgos = [HOG()]
+# Main
+mvAlgos = [HOG(), Motion()]
+names = ["HOG", "Motion"]
 YOLO = YOLO()
 testVid = cv2.VideoCapture('testVids/vtest.mp4')
 frame = None
 frameCount = 0
 
+np.random.seed(1000)
 yoloColour = (0, 0, 255)
 testColour = (0, 255, 0)
+testColours = np.random.randint(0, 225, size=(len(mvAlgos), 3), dtype="uint8")
+
+print(testColours[0])
+
 
 testVid.release()
 testVid = cv2.VideoCapture('testVids/vtest.mp4')
@@ -62,6 +70,7 @@ frame = None
 
 while True:
     ret, frame = testVid.read()
+    cleanFrame = frame.copy()
 
     # End of video
     if not ret:
@@ -71,23 +80,34 @@ while True:
     yoloDetections = YOLO.detect(frame)
     draw(yoloDetections, frame, yoloColour)
 
+    results = [None] * len(mvAlgos)
+    algoNum = 0
+
     for algo in mvAlgos:
-        detections = algo.detect(frame)
-        draw(detections, frame, testColour)
+        detections = algo.detect(cleanFrame)
 
         if detections is None or yoloDetections is None:
             continue
 
-        best = []
+        # Draw detections in this algos colour
+        color = (int(testColours[algoNum][0]), int(testColours[algoNum][1]), 
+                 int(testColours[algoNum][2]))
+        draw(detections, frame, color)
+
+        results[algoNum] = [0] * max(len(detections), len(yoloDetections))
         count = 0
         if len(detections) > 0:
             for box in detections:
-                best.append(0)
+                # best.append(0)
                 for yolobox in yoloDetections:
-                    best[count] = max(best[count], getIOU(box, yolobox))
+                    results[algoNum][count] = max(results[algoNum][count],
+                                                  getIOU(box, yolobox))
                 count += 1
 
-        print("Best:", best)
+        algoNum += 1
+
+        for i, algo in enumerate(mvAlgos):
+            print(names[i], results[i])
 
     cv2.imshow("frame", frame)
     cv2.waitKey(0)

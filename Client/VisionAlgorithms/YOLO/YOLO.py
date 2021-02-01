@@ -7,27 +7,27 @@ class YOLO:
     def __init__(self):
         print("Initialising YOLO")
         self.prev = None
-        self.labelsLocation = "VisionAlgorithms/YOLO/yolo-coco/coco.names"
-        self.cfgLocation = "VisionAlgorithms/YOLO/yolo-coco/yolov3.cfg"
-        self.weightsLocation = "VisionAlgorithms/YOLO/yolo-coco/yolov3.weights"
-        self.confidenceMin = 0.5
-        self.thresholdMin = 0.3
+        self.labelLoc = "VisionAlgorithms/YOLO/yolo-coco/coco.names"
+        self.cfgLoc = "VisionAlgorithms/YOLO/yolo-coco/yolov3.cfg"
+        self.weightsLoc = "VisionAlgorithms/YOLO/yolo-coco/yolov3.weights"
+        self.confMin = 0.5
+        self.thresMin = 0.3
 
         # Load the labels
-        self.LABELS = open(self.labelsLocation).read().strip().split("\n")
+        self.labels = open(self.labelLoc).read().strip().split("\n")
 
         # Get random colours for labels
         np.random.seed(100)
-        self.COLORS = np.random.randint(0, 225, size=(len(self.LABELS), 3), dtype="uint8")
+        self.colours = np.random.randint(0, 225, size=(len(self.labels), 3), dtype="uint8")
 
         print("Attempting to load YOLO...")
-        self.net = cv2.dnn.readNetFromDarknet(self.cfgLocation, self.weightsLocation)
+        self.neuralNet = cv2.dnn.readNetFromDarknet(self.cfgLoc, self.weightsLoc)
 
         #(H, W) = frame1.shape[:2]
 
         # Get output layer names we need from YOLO
-        self.ln = self.net.getLayerNames()
-        self.ln = [self.ln[i[0] - 1] for i in self.net.getUnconnectedOutLayers()]
+        self.ln = self.neuralNet.getLayerNames()
+        self.ln = [self.ln[i[0] - 1] for i in self.neuralNet.getUnconnectedOutLayers()]
 
         self.peopleOnly = True
         
@@ -40,8 +40,8 @@ class YOLO:
         (H, W) = frame1.shape[:2]
 
         blob = cv2.dnn.blobFromImage(frame1, 1 / 255.0, (416, 416), swapRB=True, crop=False)
-        self.net.setInput(blob)
-        layerOutputs = self.net.forward(self.ln)
+        self.neuralNet.setInput(blob)
+        layerOutputs = self.neuralNet.forward(self.ln)
         boxes = []
         confidences = []
         classIDs = []
@@ -52,22 +52,25 @@ class YOLO:
                 classID = np.argmax(scores)
                 confidence = scores[classID]
 
-                if confidence > self.confidenceMin:
+                # Skip if not person and set to peopleonly
+                if classID != 0 and self.peopleOnly:
+                    continue
+
+                # If meets minimum confidence
+                if confidence > self.confMin:
+                    # Convert from YOLO bounding box to standard X, Y, W, H
                     box = detection[0:4] * np.array([W, H, W, H])
-                    (centerX, centerY, width, height) = box.astype("int")
+                    (bCentreX, bCentreY, bWidth, bHeight) = box.astype("int")
 
-                    # Skip if not person and set to peopleonly
-                    if classID != 0 and self.peopleOnly:
-                        continue
+                    x = int(bCentreX - (bWidth/2))
+                    y = int(bCentreY - (bHeight/2))
 
-                    x = int(centerX - (width/2))
-                    y = int(centerY - (height/2))
-
-                    boxes.append([x, y, int(width), int(height)])
+                    # Add box, confidences and ID
+                    boxes.append([x, y, int(bWidth), int(bHeight)])
                     confidences.append(float(confidence))
                     classIDs.append(classID)
 
-        idxs = cv2.dnn.NMSBoxes(boxes, confidences, self.confidenceMin, self.thresholdMin)
+        idxs = cv2.dnn.NMSBoxes(boxes, confidences, self.confMin, self.thresMin)
 
         result = []
         if len(idxs) > 0:
@@ -83,7 +86,7 @@ class YOLO:
                 (w, h) = (boxes[i][2], boxes[i][3])
 
                 # draw a bounding box rectangle and label on the image
-                color = [int(c) for c in self.COLORS[classIDs[i]]]
+                color = [int(c) for c in self.colours[classIDs[i]]]
                 cv2.rectangle(frame1, (x, y), (x + w, y + h), color, 2)
-                text = "{}: {:.4f}".format(self.LABELS[classIDs[i]], confidences[i])
+                text = "{}: {:.4f}".format(self.labels[classIDs[i]], confidences[i])
                 cv2.putText(frame1, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
