@@ -40,10 +40,10 @@ class Motion:
                 continue
             rect = cv2.boundingRect(contour)
             detections.append(rect)
-        
+
         return detections
 
-            
+
 
         #(minX, minY) = (np.inf, np.inf)
         #maxX, maxY = (-np.inf, -np.inf)
@@ -52,7 +52,7 @@ class Motion:
             return None
 
         return contours
-        
+
 
         # Otherwise loop over contours
         #for c in contours:

@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+import imutils
 
 
 class HOG:
@@ -23,7 +24,8 @@ class HOG:
 
         #hog = cv2.HOGDescriptor(winSize, blockSize, blockStride, cellSize, nbins, derivAperture, winSigma, histogramNormType, L2HysThreshold, gammaCorrection, nlevels, signedGradients)
         #hog = cv2.HOGDescriptor() #Default settings
-        self.hog = cv2.HOGDescriptor((64,128), (16,16), (8,8), (8,8), 9, 1 ) #Equivalent to default
+        # self.hog = cv2.HOGDescriptor((64,128), (16,16), (8,8), (8,8), 9, 1 ) #Equivalent to default
+        self.hog = cv2.HOGDescriptor()
         #hog = cv2.HOGDescriptor((32,64), (8,8), (4,4), (4,4), 9) #This worked well when I didn't resize the image, (half original params), better to make image 2x size?
 
         self.hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
@@ -35,7 +37,8 @@ class HOG:
     def detect(self, image):
         #gray = cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY)
         #frame1 = cv2.resize(frame1, (400, 400))
-        boxes, weights = self.hog.detectMultiScale(image, winStride=(4, 4),
+        image = cv2.resize(image, (500, 500))
+        boxes, weights = self.hog.detectMultiScale(image, winStride=(2, 2),
                                                    padding=(1, 1), scale=4)
 
         #boxes = np.array([[x, y, x + w, y + h] for (x, y, w, h) in boxes])
@@ -43,12 +46,48 @@ class HOG:
         #print("Boxes:\n", boxes)
         return boxes
 
-        #Corners? :)
+        # THIS DOESNT WORK, ITS X Y W H NOT BELOW
         #for(xA, yA, xB, yB) in boxes:
            # cv2.rectangle(frame1, (xA, yA), (xB, yB), (0, 255, 0), 2)
 
 
         #frame1 = cv2.resize(frame1,(480*2,360*2),fx=0,fy=0, interpolation = cv2.INTER_CUBIC)
+
+    # https://www.researchgate.net/publication/259930836_Improving_HOG_with_Image_Segmentation_Application_to_Human_Detection
+    def isHuman(self, image):
+        resizedImage = cv2.resize(image, (int(64*2), int(128*2)), interpolation = cv2.INTER_CUBIC)
+        # resizedImage = imutils.resize(image, width=min(1200, image.shape[1]))
+        #resizedImage = cv2.resize(image, (64, 128))
+        # resizedImage = image
+        # boxes, weights = self.hog.detect(resizedImage)
+        # boxes, weights = self.hog.detectMultiScale(resizedImage, winStride=(4, 4), padding=(8, 8), scale=1.03)
+        # Corners? :)
+
+        # Changing winStride helped ALOT here
+        (rects, weights) = self.hog.detectMultiScale(image, winStride=(1, 1), padding=(8, 8), scale=1.05)
+        # (rects, weights) = self.hog.detectMultiScale(image, winStride=(4, 4), padding=(8, 8), scale=1.05)
+
+        #print("compute:", self.hog.compute(resizedImage), "compute end")
+
+        # compute = self.hog.compute(resizedImage)
+
+        print(rects)
+        print(weights)
+        
+        # help(cv2.HOGDescriptor())
+
+        if(len(rects) > 0):
+            print("Its human!")
+            for (x, y, w, h) in rects:
+                cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
+        else:
+            print("None found")
+
+
+        cv2.imshow("HOG ishuman", image)
+        cv2.waitKey(0)
+
+
 
 
 #cap = cv2.VideoCapture('vtest.avi.mp4')

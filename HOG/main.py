@@ -6,7 +6,7 @@ frame_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 frame_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
 fourcc = cv2.VideoWriter_fourcc('X', 'V', 'I', 'D')
-out = cv2.VideoWriter('output.avi', fourcc, 5.0, (1280, 720))
+# out = cv2.VideoWriter('output.avi', fourcc, 5.0, (1280, 720))
 
 ret, frame1 = cap.read()
 frame1 = cv2.resize(frame1,(480*2,360*2),fx=0,fy=0, interpolation = cv2.INTER_CUBIC)
@@ -47,11 +47,11 @@ while cap.isOpened():
   for(xA, yA, xB, yB) in boxes:
     cv2.rectangle(frame1, (xA, yA), (xB, yB), (0, 255, 0), 2)
 
-  out.write(frame1.astype('uint8'))
+  #out.write(frame1.astype('uint8'))
 
 
   cv2.imshow("HOG", frame1)
-  cv2.waitKey(0)
+  cv2.waitKey(1)
 
 
 

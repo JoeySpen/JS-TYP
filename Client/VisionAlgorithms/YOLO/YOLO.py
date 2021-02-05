@@ -30,7 +30,6 @@ class YOLO:
         self.ln = [self.ln[i[0] - 1] for i in self.neuralNet.getUnconnectedOutLayers()]
 
         self.peopleOnly = True
-        
 
     def update(self, image):
         return None

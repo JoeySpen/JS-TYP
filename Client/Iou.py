@@ -37,8 +37,6 @@ def getIOU(box1, box2):
     return iou
 
 
-
-
 def draw(detections, frame, colour):
     if detections is None:
         return
@@ -110,6 +108,6 @@ while True:
             print(names[i], results[i])
 
     cv2.imshow("frame", frame)
-    cv2.waitKey(0)
+    cv2.waitKey(1)
 
 testVid.release()
