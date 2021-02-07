@@ -48,7 +48,7 @@ discordReporter = None
 @app.route("/")
 def index():
     # Return the rendered template
-    return render_template("index.html")
+    return render_template("test2.html")
 
 
 def detect_motion(frameCount):
@@ -177,26 +177,18 @@ def boxes():
     # return Response(rsp, mimetype="text")
     return Response(str(box), mimetype="text")
 
-# @app.route('/large')
-# def generate_large_csv():
-#     def generate():
-#         for i in range(0,1000000):
-#             yield ','.join("bob") + '\n'
-#     return Response(generate(), mimetype='text')
-
-
 # Deal with form request to change parameters
 @app.route('/submit', methods=['GET', 'POST'])
 def handle_request():
     global md
     # print("Got request?")
-    print(request.form)
+    print("form: ", request.form)
     if request.form["DetectType"] == "motion":
         print("Changing to motion detection!")
         md = Motion()
-    elif request.form["DetectType"] == "people":
+    elif request.form["DetectType"] == "hog":
         md = HOG()
-    elif request.form["DetectType"] == "objects":
+    elif request.form["DetectType"] == "bgsub":
         md = SingleMotionDetector(accumWeight=0.1)
     elif request.form["DetectType"] == "YOLO":
         md = YOLO()
@@ -220,10 +212,8 @@ if __name__ == '__main__':
     t.daemon = True
     t.start()
 
-
     # Start the flask app
     app.run(host=args["ip"], port=args["port"], debug=True,
             threaded=True, use_reloader=False)
-
 
 vs.stop()
