@@ -1,39 +1,44 @@
-import smtplib, ssl
+import smtplib
+import ssl
 import cv2
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.image import MIMEImage
 
-port = 465
-email = "JSTYP21@gmail.com"
-password = "Turing41"
-subject = "PiVision Security Alert"
-footer = "This message was sent by your PiVision device."
 
-# Convert image CV2 -> jpg bytes
-img = cv2.imread('image/1.png')
-encodedImage = cv2.imencode(".jpg", img)[1].tobytes()
+class EmailReporter:
+    def __init__(self):
 
-# Mime settings, create message
-msg = MIMEMultipart()
-msg["From"] = email
-msg["To"] = "dragonslash42@gmail.com"
-msg["Subject"] = subject
-msg.attach(MIMEText('<b>Below is an image from your device</b><br><img src="cid:image1"><br>' + footer, 'html'))
+        self.port = 465
+        self.email = "JSTYP21@gmail.com"
+        self.password = "Turing41"
+        self.subject = "PiVision Security Alert"
+        self.footer = "This message was sent by your PiVision device."
 
-# Add image to message
-image = MIMEImage(encodedImage)
-image.add_header('Content-ID', '<image1>')
-msg.attach(image)
+        # Mime settings, create message
+        self.msg = MIMEMultipart()
+        self.msg["From"] = self.email
+        self.msg["To"] = "dragonslash42@gmail.com"
+        self.msg["Subject"] = self.subject
+        self.msg.attach(MIMEText('<b>Below is an image from your device</b><br><img src="cid:image1"><br>' + self.footer, 'html'))
 
-# Create SSL context
-sslContext = ssl.create_default_context()
+        # Create SSL context
+        self.sslContext = ssl.create_default_context()
 
-# Login to gmail
-server = smtplib.SMTP_SSL("smtp.gmail.com", port, context=sslContext)
-server.login(email, password)
+        # Login to gmail
+        self.server = smtplib.SMTP_SSL("smtp.gmail.com",
+                                       self.port, context=self.sslContext)
+        self.server.login(self.email, self.password)
 
-# Send message
-text = msg.as_string()
-server.sendmail(email, "dragonslash42@gmail.com",
-                text)
+    def send(self, inputImage):
+        # Convert and add image
+        # self.img = cv2.imread('image/1.png') # Load test image
+        encodedImage = cv2.imencode(".jpg", inputImage)[1].tobytes()
+        image = MIMEImage(encodedImage)
+        image.add_header('Content-ID', '<image1>')
+        self.msg.attach(image)
+
+        # Send message
+        text = self.msg.as_string()
+        self.server.sendmail(self.email, "dragonslash42@gmail.com",
+                             text)
