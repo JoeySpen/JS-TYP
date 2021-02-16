@@ -4,11 +4,11 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <link href="https://fonts.googleapis.com/css?family=Open Sans:300,400,500,600,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/david.css">
-    <link rel="stylesheet" href="assets/joey.css">
     <link rel="stylesheet" href="../static/assets/styles.css">
     <link rel="stylesheet" href="/static/assets/styles.css">
     <script src="https://kit.fontawesome.com/37b5bdb510.js" crossorigin="anonymous"></script>
+    <script src="/static/assets/subscribe.js"></script>
+    <script src="../static/assets/subscribe.js"></script>
     <title>Pi Video Surveillance</title>
   </head>
 
@@ -44,22 +44,22 @@
             <div class="col-12 container but-col nopadding">
               <form class="form" action = "/submit" method="post">
                 <div class="inputGroup">
-                  <input id="motion" name="DetectType" type="radio"/>
+                  <input id="motion" name="DetectType" type="radio" value="motion"/>
                   <label for="motion" class="inputLabel">Motion Based Detection <span class="spanHidden" id="motion"> (Current) </span> </label>
                 </div>
   
                 <div class="inputGroup">
-                  <input id="hog" name="DetectType" type="radio" />
+                  <input id="hog" name="DetectType" type="radio" value="hog"/>
                   <label for="hog" class="inputLabel">People Detector<span class="spanHidden" id="hog"> (Current) </span></label>
                 </div>
 
                 <div class="inputGroup">
-                  <input id="bgsub" name="DetectType" type="radio" />
+                  <input id="bgsub" name="DetectType" type="radio" value="bgsub"/>
                   <label for="bgsub" class="inputLabel">Background Subtraction<span class="spanHidden" id="bgsub"> (Current) </span></label>
                 </div>
 
                 <div class="inputGroup">
-                  <input id="YOLO" name="DetectType" type="radio" />
+                  <input id="YOLO" name="DetectType" type="radio" value="YOLO"/>
                   <label for="YOLO" class="inputLabel">AI Detection<span class="spanHidden" id="YOLO"> (Current) </span></label>
                 </div>
               
@@ -88,49 +88,49 @@
               </div>
             
             <!-- Reporting -->
-           <div class="but-col">
+           <div class="but-col row justify-content-center">
             <button type="button" class="btn btn-light btn-lg dropme" data-toggle="collapse" href="#collapseMotion2" aria-expanded="true" aria-controls="collapseMotion"> Configure Reporting <i class="fas fa-caret-down"></i></button>
             <div class="collapse col-10 align-content-center" id="collapseMotion2">
               <p><br> Reporting Channel </p>
               <div class="inputGroup">
-                <input id="discord" name="ReportMedium" type="radio" />
+                <input id="discord" name="ReportMedium" type="radio" value="discord"/>
                 <label for="discord" class="inputLabel"><i class="fab fa-discord"></i> Discord<span class="spanHidden" id="discord"> (Current) </span></label>
               </div>
 
               <div class="inputGroup">
-                <input id="twitter" name="ReportMedium" type="radio" />
+                <input id="twitter" name="ReportMedium" type="radio" value="twitter"/>
                 <label for="twitter" class="inputLabel"> <i class="fab fa-twitter"></i> Twitter<span class="spanHidden" id="twitter"> (Current) </span></label>
               </div>
 
               <div class="inputGroup">
-                <input id="email" name="ReportMedium" type="radio" />
+                <input id="email" name="ReportMedium" type="radio" value="email"/>
                 <label for="email" class="inputLabel"> <i class="fas fa-envelope"></i> E-mail <span class="spanHidden" id="email"> (Current) </span></label>
               </div>
 
               <p><br> Report Type </p>
               <div class="inputGroup">
-                <input id="count" name="reportType" type="radio" />
+                <input id="count" name="ReportType" type="radio" value="count"/>
                 <label for="count" class="inputLabel"> <i class="fas fa-users"></i> Count <span class="spanHidden" id="count"> (Current) </span></label>
               </div>
 
               <div class="inputGroup">
-                <input id="snapshot" name="reportType" type="radio" />
+                <input id="snapshot" name="ReportType" type="radio" value="snapshot"/>
                 <label for="snapshot" class="inputLabel"> <i class="fas fa-camera"></i> Snapshot <span class="spanHidden" id="counter"> (Current) </span></label>
               </div>
 
               <p><br> Report Interval... </p>
 
               <div class="inputGroup">
-                <input id="time" name="reportFreq" type="radio" />
+                <input id="time" name="ReportFreq" type="radio" value="betweenTimes"/>
                 <label for="time" class="inputLabel"> <i class="far fa-clock"></i> On detection between times... <span class="spanHidden" id="discord"> (Current) </span></label>
               </div>
 
               <!-- Clocks here?? -->
-              <input type="time" id="appt" name="appt">
-              <input type="time" id="appt" name="appt">
+              <input type="time" id="fromTime" name="fromTime">
+              <input type="time" id="toTime" name="toTime">
 
               <div class="inputGroup">
-                <input id="timer" name="reportFreq" type="radio" />
+                <input id="timer" name="ReportFreq" type="radio" value="timer"/>
                 <label for="timer" class="inputLabel"> <i class="far fa-clock"></i> Every x minutes... <span class="spanHidden" id="discord"> (Current) </span></label>
               </div>
 
@@ -147,15 +147,15 @@
               <p> Box settings </p>
 
               <div class="inputGroup">
-                <input id="none" name="boxType" type="radio" />
+                <input id="none" name="boxType" type="radio" value="none"/>
                 <label for="none" class="inputLabel"> <i class="fas fa-user-alt"></i> None <span class="spanHidden" id="discord"> (Current) </span></label>
               </div>
               <div class="inputGroup">
-                <input id="merge" name="boxType" type="radio" />
+                <input id="merge" name="boxType" type="radio" value="merge"/>
                 <label for="merge" class="inputLabel"> <i class="fas fa-portrait"></i> Merge <span class="spanHidden" id="discord"> (Current) </span></label>
               </div>
               <div class="inputGroup">
-                <input id="all" name="boxType" type="radio" />
+                <input id="all" name="boxType" type="radio" value="all"/>
                 <label for="all" class="inputLabel"> <i class="fas fa-portrait"></i> Show All <span class="spanHidden" id="discord"> (Current) </span></label>
               </div>
             </div>
@@ -191,8 +191,6 @@
           <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
           <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
           <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-      <script src="assets/jquery.js"></script>
-      <script src="assets/joeyquery.js"></script>
   
   </body>
 </html>

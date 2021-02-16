@@ -14,15 +14,22 @@ from flask import request
 from VisionAlgorithms.Motion import Motion
 from VisionAlgorithms.HOG import HOG
 from VisionAlgorithms.YOLO.YOLO import YOLO
+from OpenSSL import SSL
 # from DiscordReporter import DiscordReporter
 
 # python webstreaming.py --ip 192.168.56.1 --port 8000
+# python webstreaming.py --ip 127.0.0.1 --port 8000
 # http://camera.butovo.com/mjpg/video.mjpg
 
 # Initialise output frame and a lock to allow
 # thread safe exchange of output frames
 outputFrame = None
 lock = threading.Lock()
+
+# # Https
+# context = SSL.Context(SSL.PROTOCOL_TLSv1_2)
+# context.use_privatekey_file('server.key')
+# context.use_certificate_file('server.crt')
 
 # Initialize a flask object
 app = Flask(__name__)
@@ -45,13 +52,19 @@ md = None
 
 discordReporter = None
 
+# Algo settings
+minSize = 0
+maxSize = 100
+boxType = None
+
+
 @app.route("/")
 def index():
     # Return the rendered template
     return render_template("test2.html")
 
 
-def detect_motion(frameCount):
+def detectMotion(frameCount):
     # Grab global references to video stream output and lock
     global vs, outputFrame, lock, box, md
 
@@ -208,7 +221,7 @@ if __name__ == '__main__':
     args = vars(ap.parse_args())
 
     # Start a thread that will perform motion detection
-    t = threading.Thread(target=detect_motion, args=(args["frame_count"],))
+    t = threading.Thread(target=detectMotion, args=(args["frame_count"],))
     t.daemon = True
     t.start()
 

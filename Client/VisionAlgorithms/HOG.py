@@ -55,7 +55,8 @@ class HOG:
 
     # https://www.researchgate.net/publication/259930836_Improving_HOG_with_Image_Segmentation_Application_to_Human_Detection
     def isHuman(self, image):
-        resizedImage = cv2.resize(image, (int(64*2), int(128*2)), interpolation = cv2.INTER_CUBIC)
+        scale = 1
+        resizedImage = cv2.resize(image, (int(64*scale), int(128*scale)), interpolation=cv2.INTER_CUBIC)
         # resizedImage = imutils.resize(image, width=min(1200, image.shape[1]))
         #resizedImage = cv2.resize(image, (64, 128))
         # resizedImage = image
@@ -64,7 +65,9 @@ class HOG:
         # Corners? :)
 
         # Changing winStride helped ALOT here
-        (rects, weights) = self.hog.detectMultiScale(image, winStride=(1, 1), padding=(8, 8), scale=1.05)
+        #(rects, weights) = self.hog.detect(resizedImage)
+        # (rects, weights) = self.hog.detectMultiScale(image, winStride=(1, 1), padding=(8, 8), scale=1.05) #works... OK ish
+        (rects, weights) = self.hog.detectMultiScale(resizedImage, winStride=(2, 2), padding=(8, 8), scale=1) #works... OK ish
         # (rects, weights) = self.hog.detectMultiScale(image, winStride=(4, 4), padding=(8, 8), scale=1.05)
 
         #print("compute:", self.hog.compute(resizedImage), "compute end")
@@ -79,12 +82,13 @@ class HOG:
         if(len(rects) > 0):
             print("Its human!")
             for (x, y, w, h) in rects:
-                cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
+                cv2.rectangle(resizedImage, (x, y), (x + w, y + h), (0, 0, 255), 2)
+                print("added")
         else:
             print("None found")
 
 
-        cv2.imshow("HOG ishuman", image)
+        cv2.imshow("HOG ishuman", resizedImage)
         cv2.waitKey(0)
 
 
