@@ -57,6 +57,8 @@ minSize = 0
 maxSize = 100
 boxType = None
 
+count = 0
+
 
 @app.route("/")
 def index():
@@ -116,7 +118,7 @@ def detectMotion(frameCount):
 
         # Update background model and increment total num
         # of frames read thus far
-        md.update(frame)  # md.update(gray)
+        #md.update(frame)  # md.update(gray) #TODO
         total += 1
 
         # cv2.imshow("feed", frame)
@@ -128,27 +130,25 @@ def detectMotion(frameCount):
 
 
 def generate():
-    # Grab global references
     global outputFrame, lock
 
     while True:
-        # wait until lock is acquired
         with lock:
             # Check output frame is available, otherwise skip
             if outputFrame is None:
                 # print("No frame")
                 continue
 
-            # Encode frame in JPEG format
-            (flag, encodedImage) = cv2.imencode(".jpg", outputFrame)
+            # Encode frame as jpg
+            (flags, jpgImage) = cv2.imencode(".jpg", outputFrame)
 
             # Ensure frame was successfully endoded
-            if not flag:
+            if not flags:
                 continue
 
-        # yield output frame in byte format
+        # Yield encoded jpg as bytes
         yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' +
-              bytearray(encodedImage) + b'\r\n')
+              bytearray(jpgImage) + b'\r\n')
 
 
 def getBoxes():
@@ -163,12 +163,13 @@ def video_feed():
     return Response(generate(),
                     mimetype="multipart/x-mixed-replace; boundary=frame")
 
-
+# Returns the most recent frame
 @app.route("/single.jpg")
 def single():
-    global outputFrame
-    (flag, encodedImage) = cv2.imencode(".jpg", outputFrame)
-    return Response(bytearray(encodedImage), mimetype="image/jpg")
+    global outputFrame, lock
+    with lock:
+        (flag, encodedImage) = cv2.imencode(".jpg", outputFrame)
+        return Response(bytearray(encodedImage), mimetype="image/jpg")
 
 
 @app.route("/boxes")
@@ -206,6 +207,13 @@ def handle_request():
     elif request.form["DetectType"] == "YOLO":
         md = YOLO()
     return index()
+
+# Deal with form request to change parameters
+@app.route('/count', methods=['GET', 'POST'])
+def getCount():
+    global count, lock
+    with lock:
+        return count
 
 
 # If main
