@@ -13,27 +13,17 @@ fetch("/settings", {
             Object.entries(response).forEach(([key, value]) => {
                 var elements = document.getElementsByName(key);
                 elements.forEach(element => {
-                    //console.log("Checking element: " + element);
-                    console.log("key:", key, "value:", value, "element.value:" ,element.value, "element.type" , element.type, "value", value)
 
-                    // Found radio button, so check it
-                    if(element.type === "radio" && element.value === value){
-                        console.log(1);
+                    // If we found an element turn it on
+                    if(element.value === value || value === "on"){
                         element.checked = true;
-                        return; // Equivalent to continue, but we do this in foreach
-                    }
 
-                    
-                    
-                    // If checkbox setting and not radio button...
-                    else if (element.type === "checkbox" && value === "on"){
-                        console.log(2);
-                        element.checked = true;
-                    }else if(element.type === "checkbox" && value === "off"){
-                        console.log(3);
-                        element.checked = false;
-                    }else{
-                        console.log(4)
+                        // If its a checkbox we force the parent div off because of the bootstrap toggle library
+                        // As sometimes this would not update
+                        if(element.type == "checkbox"){
+                            element.parentElement.classList.remove("off");
+                            
+                        }
                     }
                 });
             });
