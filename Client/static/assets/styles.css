@@ -152,6 +152,15 @@ ul li {
 
 }
 
+/**** Toggle buttons ***/
+.toggle-handle{
+	/*border: 1px solid #b3b7bb!important;*/
+}
+
+.toggle{
+	/*border: 1px solid #b3b7bb!important;*/
+}
+
 
 /* borrowed **********************************************/
 .inputGroup{
