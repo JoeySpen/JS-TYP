@@ -29,6 +29,7 @@ class HOG:
         #hog = cv2.HOGDescriptor((32,64), (8,8), (4,4), (4,4), 9) #This worked well when I didn't resize the image, (half original params), better to make image 2x size?
 
         self.hog.setSVMDetector(cv2.HOGDescriptor_getDefaultPeopleDetector())
+        self.resizeHeight = 0
         #hog.setSVMDetector(cv2.HOGDescriptor_getDaimlerPeopleDetector())
     
     def update(self, image):
@@ -40,18 +41,7 @@ class HOG:
         image = cv2.resize(image, (500, 500))
         boxes, weights = self.hog.detectMultiScale(image, winStride=(2, 2),
                                                    padding=(1, 1), scale=4)
-
-        #boxes = np.array([[x, y, x + w, y + h] for (x, y, w, h) in boxes])
-        #print(len(boxes))
-        #print("Boxes:\n", boxes)
         return boxes
-
-        # THIS DOESNT WORK, ITS X Y W H NOT BELOW
-        #for(xA, yA, xB, yB) in boxes:
-           # cv2.rectangle(frame1, (xA, yA), (xB, yB), (0, 255, 0), 2)
-
-
-        #frame1 = cv2.resize(frame1,(480*2,360*2),fx=0,fy=0, interpolation = cv2.INTER_CUBIC)
 
     # https://www.researchgate.net/publication/259930836_Improving_HOG_with_Image_Segmentation_Application_to_Human_Detection
     def isHuman(self, image):
@@ -90,6 +80,11 @@ class HOG:
 
         cv2.imshow("HOG ishuman", resizedImage)
         cv2.waitKey(0)
+
+    # Converts the size of the image based off the person size
+    # 0.1 0.5 1 for example
+    def setDetectSize(self, personSize):
+        self.resizeHeight = 128/personSize
 
 
 
