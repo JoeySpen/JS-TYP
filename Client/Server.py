@@ -17,8 +17,8 @@ from VisionAlgorithms.YOLO.YOLO import YOLO
 from OpenSSL import SSL
 # from DiscordReporter import DiscordReporter
 
-# python webstreaming.py --ip 192.168.56.1 --port 8000
-# python webstreaming.py --ip 127.0.0.1 --port 8000
+# python Server.py --ip 192.168.56.1 --port 8000
+# python Server.py --ip 127.0.0.1 --port 8000
 # http://camera.butovo.com/mjpg/video.mjpg
 
 # Initialise output frame and a lock to allow
@@ -58,6 +58,23 @@ maxSize = 100
 boxType = None
 
 count = 0
+
+# Default settings
+settings = {
+    "DetectType": "motion",
+    "BoxType": "all",
+    "ReportMedium": "None",
+    "ReportType": "None",
+    "ReportFreq": "None",
+    "FromTime": "None",
+    "ToTime": "None",
+    "BlackAndWhite": "off",
+    "ReduceRes": "off"
+}
+
+# HTML does not post unticked boxes
+# So if these aren't in the post, disable the setting
+checkBoxKeys = ["ReduceRes", "BlackAndWhite"]
 
 
 @app.route("/")
@@ -156,6 +173,9 @@ def getBoxes():
     while True:
         yield box
 
+@app.route("/settings")
+def getSettings():
+    return settings
 
 @app.route("/video_feed")
 def video_feed():
@@ -194,19 +214,51 @@ def boxes():
 # Deal with form request to change parameters
 @app.route('/submit', methods=['GET', 'POST'])
 def handle_request():
+    updateSettings(request.form)
     global md
     # print("Got request?")
     print("form: ", request.form)
-    if request.form["DetectType"] == "motion":
-        print("Changing to motion detection!")
-        md = Motion()
-    elif request.form["DetectType"] == "hog":
-        md = HOG()
-    elif request.form["DetectType"] == "bgsub":
-        md = SingleMotionDetector(accumWeight=0.1)
-    elif request.form["DetectType"] == "YOLO":
-        md = YOLO()
+    # if("DetectType" not in request.form):
+    #     return index() 
+    # if request.form["DetectType"] == "motion":
+    #     print("Changing to motion detection!")
+    #     md = Motion()
+    # elif request.form["DetectType"] == "hog":
+    #     md = HOG()
+    # elif request.form["DetectType"] == "bgsub":
+    #     md = SingleMotionDetector(accumWeight=0.1)
+    # elif request.form["DetectType"] == "YOLO":
+    #     md = YOLO()
     return index()
+
+
+# TODO async locks
+def updateSettings(form):
+    global settings, checkBoxKeys
+
+    if not form:
+        print("No form submitted...")
+        return
+
+    for key, value in form.items():
+        print("Key: ", key, " value: ", value)
+
+        # Invalid key
+        if key not in settings:
+            print("Invalid setting key!?")
+            continue
+
+        if value:
+            print("Updating ", key)
+            settings[key] = value
+
+    # Handles case of check boxes not being posted if off
+    for checkBoxKey in checkBoxKeys:
+        if checkBoxKey not in form.keys():
+            print("Upadting checkbox key! ", checkBoxKey)
+            settings[checkBoxKey] = "off"
+
+    return
 
 # Deal with form request to change parameters
 @app.route('/count', methods=['GET', 'POST'])

@@ -99,9 +99,9 @@ ul li {
 }
 
 .form-border {
-	border-color: rgb(214, 214, 214);
+	/*border-color: rgb(214, 214, 214);
 	border-width: .2rem;
-	border-style: solid;
+	border-style: solid;*/
 	border-radius: 2rem;
 	background-color: rgb(233, 233, 233);
 	padding-left: 0;

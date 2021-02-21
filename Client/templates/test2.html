@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/static/assets/styles.css">
     <script src="https://kit.fontawesome.com/37b5bdb510.js" crossorigin="anonymous"></script>
     <script src="/static/assets/subscribe.js"></script>
-    <script src="../static/assets/subscribe.js"></script>
+
 
     <link rel="stylesheet "href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle/css/bootstrap4-toggle.min.css">
     
@@ -18,7 +18,7 @@
 
   <body>
 
-
+    <script src="/static/assets/currentlySelected.js"></script>
 
     <div class="container-fluid text-center">
       <div class="col-12">
@@ -40,7 +40,7 @@
         <div class="container-fluid col-12 col-lg-4 justify-content-center text-center">
           <h3> Configuration <i class="fas fa-cogs"></i> </h3>
           <!-- Button container -->
-          <div class="form-border col-12">
+          <div class="form-border shadow col-12">
             <h5> Detection Algorithm </h5>
 
             <!-- Motion settings -->
@@ -129,8 +129,8 @@
               </div>
 
               <!-- Clocks here?? -->
-              <input type="time" id="fromTime" name="fromTime">
-              <input type="time" id="toTime" name="toTime">
+              <input type="time" id="FromTime" name="FromTime">
+              <input type="time" id="ToTime" name="ToTime">
 
               <div class="inputGroup">
                 <input id="timer" name="ReportFreq" type="radio" value="timer"/>
@@ -147,15 +147,15 @@
               <p> Box settings </p>
 
               <div class="inputGroup">
-                <input id="none" name="boxType" type="radio" value="none"/>
+                <input id="none" name="BoxType" type="radio" value="none"/>
                 <label for="none" class="inputLabel"> <i class="fas fa-user-alt"></i> None <span class="spanHidden" id="discord"> (Current) </span></label>
               </div>
               <div class="inputGroup">
-                <input id="merge" name="boxType" type="radio" value="merge"/>
+                <input id="merge" name="BoxType" type="radio" value="merge"/>
                 <label for="merge" class="inputLabel"> <i class="fas fa-portrait"></i> Merge <span class="spanHidden" id="discord"> (Current) </span></label>
               </div>
               <div class="inputGroup">
-                <input id="all" name="boxType" type="radio" value="all"/>
+                <input id="all" name="BoxType" type="radio" value="all"/>
                 <label for="all" class="inputLabel"> <i class="fas fa-portrait"></i> Show All <span class="spanHidden" id="discord"> (Current) </span></label>
               </div>
             </div>
@@ -173,7 +173,7 @@
                     <p> Black and White</p>
                   </div>
                   <div class="col-3">
-                    <input type="checkbox" data-toggle="toggle" data-offstyle="secondary">
+                    <input type="checkbox" data-toggle="toggle" data-offstyle="secondary" id="BlackAndWhite" name="BlackAndWhite">
                   </div>
                 </div>
 
@@ -182,7 +182,7 @@
                     <p> Reduce Resolution </p>
                   </div>
                   <div class="col-3">
-                    <input type="checkbox" data-toggle="toggle" data-offstyle="secondary">
+                    <input type="checkbox" data-toggle="toggle" data-offstyle="secondary" id="ReduceRes" name="ReduceRes" >
                   </div>
                 </div>
                 
