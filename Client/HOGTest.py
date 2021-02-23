@@ -14,5 +14,3 @@ for i in range(1, 9):
     img = cv2.imread('image/' + str(i) + 'n.png')
     HOG.isHuman(img)
 
-
-

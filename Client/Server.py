@@ -48,7 +48,7 @@ time.sleep(1)
 
 t = None
 
-md = None
+md = Motion()
 
 discordReporter = None
 
@@ -90,7 +90,7 @@ def detectMotion(frameCount):
     # Initialise motion detector and number of frames
     # md = SingleMotionDetector(accumWeight=0.1)
     # md = Motion(accumWeight=0.1)
-    md = HOG()
+    # md = Motion()
     total = 0
 
     # Loop over frames from video stream
@@ -119,6 +119,8 @@ def detectMotion(frameCount):
                 continue
 
             box = detections
+
+            #print(detections)
 
             for detect in detections:
                 (x, y, w, h) = detect
@@ -214,27 +216,30 @@ def boxes():
 # Deal with form request to change parameters
 @app.route('/submit', methods=['GET', 'POST'])
 def handle_request():
+    global settings, md
+    if(request.form["DetectType"] != settings["DetectType"]):
+        newType = request.form["DetectType"]
+        if newType == "motion":
+            md = Motion()
+        elif newType == "hog":
+            md = HOG()
+        elif newType == "bgsub":
+            md = SingleMotionDetector(accumWeight=0.1)
+        elif newType == "YOLO":
+            md = YOLO()
+
     updateSettings(request.form)
-    global md
-    # print("Got request?")
-    print("form: ", request.form)
-    # if("DetectType" not in request.form):
-    #     return index() 
-    # if request.form["DetectType"] == "motion":
-    #     print("Changing to motion detection!")
-    #     md = Motion()
-    # elif request.form["DetectType"] == "hog":
-    #     md = HOG()
-    # elif request.form["DetectType"] == "bgsub":
-    #     md = SingleMotionDetector(accumWeight=0.1)
-    # elif request.form["DetectType"] == "YOLO":
-    #     md = YOLO()
+
+    #print("form: ", request.form)
     return index()
 
 
 # TODO async locks
+# TODO Do I even need to save settings here? Maybe put all this in VisionAlgorithm
+# And when clientside js requests it send it from the algo
 def updateSettings(form):
     global settings, checkBoxKeys
+    print(form)
 
     if not form:
         print("No form submitted...")
@@ -251,12 +256,14 @@ def updateSettings(form):
         if value:
             print("Updating ", key)
             settings[key] = value
+            md.updateSetting(key, value)
 
     # Handles case of check boxes not being posted if off
     for checkBoxKey in checkBoxKeys:
         if checkBoxKey not in form.keys():
-            print("Upadting checkbox key! ", checkBoxKey)
+            print("Updating checkbox key! ", checkBoxKey)
             settings[checkBoxKey] = "off"
+            md.updateSetting(key, "off")
 
     return
 

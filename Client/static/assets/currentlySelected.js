@@ -14,7 +14,7 @@ fetch("/settings", {
                 var elements = document.getElementsByName(key);
                 elements.forEach(element => {
 
-                    // If we found an element turn it on
+                    // If we found an element matching the value or its a checkbox ("on" value)
                     if(element.value === value || value === "on"){
                         element.checked = true;
 
@@ -22,16 +22,8 @@ fetch("/settings", {
                         // As sometimes this would not update
                         if(element.type == "checkbox"){
                             element.parentElement.classList.remove("off");
-                            
                         }
                     }
                 });
             });
-
-/*
-response.forEach(row => {
-//appendNewDream(row.dream);
-console.log("parsing...");
-
-});*/
 });

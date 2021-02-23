@@ -1,10 +1,11 @@
 import numpy as np
 import cv2
+from VisionAlgorithms.VisionAlgorithm import VisionAlgorithm
 
-
-class Hybrid:
+class Hybrid(VisionAlgorithm):
 
     def __init__(self):
+        super().__init__()
         print("Initialising Hybrid")
         self.prev = None
         self.minSize = 900
@@ -14,6 +15,7 @@ class Hybrid:
         return
 
    def detect(self, image):
+       super().detect(image)
         if self.prev is None:
             self.prev = image
             return

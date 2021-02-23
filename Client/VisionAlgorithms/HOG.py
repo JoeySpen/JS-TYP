@@ -1,11 +1,13 @@
 import numpy as np
 import cv2
 import imutils
+from VisionAlgorithms.VisionAlgorithm import VisionAlgorithm
 
 
-class HOG:
+class HOG(VisionAlgorithm):
 
     def __init__(self):
+        super().__init__()
         print("Initialising HOG")
         # winSize = (32,32) #default
         # winSize = (cap.get(3), cap.get(4)) #joeytest
@@ -36,6 +38,7 @@ class HOG:
         return None
 
     def detect(self, image):
+        super().detect(image)
         #gray = cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY)
         #frame1 = cv2.resize(frame1, (400, 400))
         image = cv2.resize(image, (500, 500))
@@ -46,7 +49,8 @@ class HOG:
     # https://www.researchgate.net/publication/259930836_Improving_HOG_with_Image_Segmentation_Application_to_Human_Detection
     def isHuman(self, image):
         scale = 1
-        resizedImage = cv2.resize(image, (int(64*scale), int(128*scale)), interpolation=cv2.INTER_CUBIC)
+        #resizedImage = cv2.resize(image, (int(64*scale), int(128*scale)), interpolation=cv2.INTER_CUBIC)
+        resizedImage = cv2.resize(image, (int(64*scale), int(128*scale)), interpolation=cv2.INTER_AREA)
         # resizedImage = imutils.resize(image, width=min(1200, image.shape[1]))
         #resizedImage = cv2.resize(image, (64, 128))
         # resizedImage = image

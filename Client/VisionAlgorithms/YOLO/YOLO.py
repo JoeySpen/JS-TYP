@@ -1,10 +1,12 @@
 import numpy as np
 import cv2
+from VisionAlgorithms.VisionAlgorithm import VisionAlgorithm
 
 
-class YOLO:
+class YOLO(VisionAlgorithm):
 
     def __init__(self):
+        super().__init__()
         print("Initialising YOLO")
         self.prev = None
         self.labelLoc = "VisionAlgorithms/YOLO/yolo-coco/coco.names"
@@ -34,11 +36,12 @@ class YOLO:
     def update(self, image):
         return None
 
-    def detect(self, frame1):
+    def detect(self, image):
+        super().detect(image)
 
-        (H, W) = frame1.shape[:2]
+        (H, W) = image.shape[:2]
 
-        blob = cv2.dnn.blobFromImage(frame1, 1 / 255.0, (416, 416), swapRB=True, crop=False)
+        blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (416, 416), swapRB=True, crop=False)
         self.neuralNet.setInput(blob)
         layerOutputs = self.neuralNet.forward(self.ln)
         boxes = []
@@ -86,6 +89,6 @@ class YOLO:
 
                 # draw a bounding box rectangle and label on the image
                 color = [int(c) for c in self.colours[classIDs[i]]]
-                cv2.rectangle(frame1, (x, y), (x + w, y + h), color, 2)
+                cv2.rectangle(image, (x, y), (x + w, y + h), color, 2)
                 text = "{}: {:.4f}".format(self.labels[classIDs[i]], confidences[i])
-                cv2.putText(frame1, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+                cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
