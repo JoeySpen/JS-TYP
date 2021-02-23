@@ -113,7 +113,7 @@ def detectMotion(frameCount):
         # Continue to process frame
         if total > frameCount:
             # motion = md.detect(frame)
-            detections = md.detect(frame)
+            (frame, detections) = md.detect(frame)
 
             if detections is None:
                 continue
@@ -246,7 +246,7 @@ def updateSettings(form):
         return
 
     for key, value in form.items():
-        print("Key: ", key, " value: ", value)
+        # print("Key: ", key, " value: ", value)
 
         # Invalid key
         if key not in settings:
@@ -263,7 +263,7 @@ def updateSettings(form):
         if checkBoxKey not in form.keys():
             print("Updating checkbox key! ", checkBoxKey)
             settings[checkBoxKey] = "off"
-            md.updateSetting(key, "off")
+            md.updateSetting(checkBoxKey, "off")
 
     return
 

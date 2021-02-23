@@ -32,7 +32,7 @@ class VisionAlgorithm:
             image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         if(self.settings["ReduceRes"]):
             # print("Reduce res")
-            image = cv2.resize(image, (image.shape[1] * 0.5, image.shape[0] * 0.5), interpolation=cv2.INTER_AREA)
+            image = cv2.resize(image, (int(image.shape[1] * 0.5), int(image.shape[0] * 0.5)), interpolation=cv2.INTER_AREA)
         return image
 
     def updateSetting(self, settingName, settingValue):
