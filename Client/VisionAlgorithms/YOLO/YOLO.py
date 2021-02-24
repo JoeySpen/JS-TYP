@@ -8,12 +8,16 @@ class YOLO(VisionAlgorithm):
     def __init__(self):
         super().__init__()
         print("Initialising YOLO")
+        self.backends = (cv2.dnn.DNN_BACKEND_DEFAULT, cv2.dnn.DNN_BACKEND_HALIDE, cv2.dnn.DNN_BACKEND_INFERENCE_ENGINE, cv2.dnn.DNN_BACKEND_OPENCV)
+        self.targets = (cv2.dnn.DNN_TARGET_CPU, cv2.dnn.DNN_TARGET_OPENCL, cv2.dnn.DNN_TARGET_OPENCL_FP16, cv2.dnn.DNN_TARGET_MYRIAD)
         self.prev = None
         self.labelLoc = "VisionAlgorithms/YOLO/yolo-coco/coco.names"
-        self.cfgLoc = "VisionAlgorithms/YOLO/yolo-coco/yolov3.cfg"
+        self.cfgLoc = "VisionAlgorithms/YOLO/yolo-coco/yolov3bw.cfg"
         self.weightsLoc = "VisionAlgorithms/YOLO/yolo-coco/yolov3.weights"
         self.confMin = 0.5
         self.thresMin = 0.3
+        self.settings["BlackAndWhite"] = True
+        self.dontChange["BlackAndWhite"] = True
 
         # Load the labels
         self.labels = open(self.labelLoc).read().strip().split("\n")
@@ -37,11 +41,12 @@ class YOLO(VisionAlgorithm):
         return None
 
     def detect(self, image):
-        super().detect(image)
+        image = super().detect(image)
 
         (H, W) = image.shape[:2]
 
-        blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (416, 416), swapRB=True, crop=False)
+        #blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (416, 416), swapRB=True, crop=False)
+        blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (416, 416), crop=False)
         self.neuralNet.setInput(blob)
         layerOutputs = self.neuralNet.forward(self.ln)
         boxes = []
@@ -78,7 +83,7 @@ class YOLO(VisionAlgorithm):
         if len(idxs) > 0:
             for i in idxs.flatten():
                 result.append(boxes[i])
-        return result
+        return image, result
 
         # Draw to image
         if len(idxs) > 0:
@@ -92,3 +97,10 @@ class YOLO(VisionAlgorithm):
                 cv2.rectangle(image, (x, y), (x + w, y + h), color, 2)
                 text = "{}: {:.4f}".format(self.labels[classIDs[i]], confidences[i])
                 cv2.putText(image, text, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+
+    # Clears prevImage frame upon changing a setting
+    def updateSetting(self, settingName, settingValue):
+        super().updateSetting(settingName, settingValue)
+        if(self.settings["BlackAndWhite"]):
+            self.cfgLoc = "VisionAlgorithms/YOLO/yolo-coco/yolov3bw.cfg"
+            self.neuralNet = cv2.dnn.readNetFromDarknet(self.cfgLoc, self.weightsLoc)

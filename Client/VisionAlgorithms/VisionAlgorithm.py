@@ -44,4 +44,3 @@ class VisionAlgorithm:
         else:
             self.settings[settingName] = settingValue
         print("MV settings:", self.settings)
-

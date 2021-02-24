@@ -48,7 +48,7 @@ time.sleep(1)
 
 t = None
 
-md = Motion()
+md = YOLO()
 
 discordReporter = None
 
@@ -83,7 +83,7 @@ def index():
     return render_template("test2.html")
 
 
-def detectMotion(frameCount):
+def visionDetection():
     # Grab global references to video stream output and lock
     global vs, outputFrame, lock, box, md
 
@@ -278,17 +278,14 @@ def getCount():
 # If main
 if __name__ == '__main__':
     # Construct the argument parser and parse command line arguments
-    ap = argparse.ArgumentParser()
-    ap.add_argument("-i", "--ip", type=str, required=True,
-                    help="ip address of the device")
-    ap.add_argument("-o", "--port", type=int, required=True,
-                    help="ephemeral port number of server (1024, to 65535)")
-    ap.add_argument("-f", "--frame-count", type=int, default=32,
-                    help="# of frames used to construct background model")
-    args = vars(ap.parse_args())
+    argParser = argparse.ArgumentParser()
+    argParser.add_argument("-i", "--ip", type=str, required=True,
+                    help="desired ip to run the server on")
+    argParser.add_argument("-o", "--port", type=int, required=True,
+                    help="desired port to run the server on [1024-65535]")
+    args = vars(argParser.parse_args())
 
-    # Start a thread that will perform motion detection
-    t = threading.Thread(target=detectMotion, args=(args["frame_count"],))
+    t = threading.Thread(target=visionDetection)
     t.daemon = True
     t.start()
 

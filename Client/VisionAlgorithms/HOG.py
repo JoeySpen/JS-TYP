@@ -38,13 +38,13 @@ class HOG(VisionAlgorithm):
         return None
 
     def detect(self, image):
-        super().detect(image)
+        image = super().detect(image)
         #gray = cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY)
         #frame1 = cv2.resize(frame1, (400, 400))
         image = cv2.resize(image, (500, 500))
         boxes, weights = self.hog.detectMultiScale(image, winStride=(2, 2),
                                                    padding=(1, 1), scale=4)
-        return boxes
+        return image, boxes
 
     # https://www.researchgate.net/publication/259930836_Improving_HOG_with_Image_Segmentation_Application_to_Human_Detection
     def isHuman(self, image):
