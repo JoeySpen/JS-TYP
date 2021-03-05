@@ -9,6 +9,7 @@ class HOG(VisionAlgorithm):
     def __init__(self):
         super().__init__()
         print("Initialising HOG")
+        self.name = "HOG"
         # winSize = (32,32) #default
         # winSize = (cap.get(3), cap.get(4)) #joeytest
         # print("winsize: ", winSize)

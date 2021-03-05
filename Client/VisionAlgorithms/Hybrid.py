@@ -7,6 +7,7 @@ class Hybrid(VisionAlgorithm):
     def __init__(self):
         super().__init__()
         print("Initialising Hybrid")
+        self.name = "Hybrid"
         self.prev = None
         self.minSize = 900
         self.HOG = HOG()

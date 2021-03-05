@@ -7,6 +7,7 @@ import cv2
 class SingleMotionDetector:
     def __init__(self, accumWeight=0.5):
         # store the accumulated weight factor
+        self.name = "BG Sub"
         self.accumWeight = accumWeight
         # initialize the background model
         self.bg = None

@@ -4,6 +4,8 @@ import cv2
 class VisionAlgorithm:
 
     def __init__(self):
+        self.name = "Abstract Vision Algorithm"
+
         # Load default settings
         self.settings = {
             "BoxType": "all",
@@ -31,7 +33,7 @@ class VisionAlgorithm:
             #print("b+w")
             image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         if(self.settings["ReduceRes"]):
-            # print("Reduce res")
+            #print("Reduce res")
             image = cv2.resize(image, (int(image.shape[1] * 0.5), int(image.shape[0] * 0.5)), interpolation=cv2.INTER_AREA)
         return image
 

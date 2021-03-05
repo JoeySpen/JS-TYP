@@ -8,16 +8,20 @@ class YOLO(VisionAlgorithm):
     def __init__(self):
         super().__init__()
         print("Initialising YOLO")
+
+        self.name = "YOLO"
         self.backends = (cv2.dnn.DNN_BACKEND_DEFAULT, cv2.dnn.DNN_BACKEND_HALIDE, cv2.dnn.DNN_BACKEND_INFERENCE_ENGINE, cv2.dnn.DNN_BACKEND_OPENCV)
         self.targets = (cv2.dnn.DNN_TARGET_CPU, cv2.dnn.DNN_TARGET_OPENCL, cv2.dnn.DNN_TARGET_OPENCL_FP16, cv2.dnn.DNN_TARGET_MYRIAD)
         self.prev = None
         self.labelLoc = "VisionAlgorithms/YOLO/yolo-coco/coco.names"
-        self.cfgLoc = "VisionAlgorithms/YOLO/yolo-coco/yolov3bw.cfg"
+        # self.cfgLoc = "VisionAlgorithms/YOLO/yolo-coco/yolov3bw.cfg"
+        self.cfgLoc = "VisionAlgorithms/YOLO/yolo-coco/yolov3.cfg"
         self.weightsLoc = "VisionAlgorithms/YOLO/yolo-coco/yolov3.weights"
         self.confMin = 0.5
         self.thresMin = 0.3
-        self.settings["BlackAndWhite"] = True
-        self.dontChange["BlackAndWhite"] = True
+        #self.settings["BlackAndWhite"] = True
+        #self.dontChange["BlackAndWhite"] = True     # TODO better black and white toggle...
+        
 
         # Load the labels
         self.labels = open(self.labelLoc).read().strip().split("\n")
@@ -26,7 +30,6 @@ class YOLO(VisionAlgorithm):
         np.random.seed(100)
         self.colours = np.random.randint(0, 225, size=(len(self.labels), 3), dtype="uint8")
 
-        print("Attempting to load YOLO...")
         self.neuralNet = cv2.dnn.readNetFromDarknet(self.cfgLoc, self.weightsLoc)
 
         #(H, W) = frame1.shape[:2]

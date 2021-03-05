@@ -267,6 +267,7 @@ def updateSettings(form):
 
     return
 
+#TODO 
 # Deal with form request to change parameters
 @app.route('/count', methods=['GET', 'POST'])
 def getCount():

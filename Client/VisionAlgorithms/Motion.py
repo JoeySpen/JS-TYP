@@ -7,6 +7,7 @@ class Motion(VisionAlgorithm):
 
     def __init__(self):
         super().__init__()
+        self.name = "Motion"
         print("Initialising Motion")
         self.prevImage = None
         self.minSize = 900
