@@ -59,6 +59,7 @@ maxSize = 100
 boxType = None
 
 count = 0
+frameCount = 10
 
 # Default settings
 settings = {
