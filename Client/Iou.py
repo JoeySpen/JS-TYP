@@ -75,14 +75,14 @@ while True:
         print("End of video")
         break
 
-    yoloDetections = YOLO.detect(frame)
+    frame, yoloDetections = YOLO.detect(frame)
     draw(yoloDetections, frame, yoloColour)
 
     results = [None] * len(mvAlgos)
     algoNum = 0
 
     for algo in mvAlgos:
-        detections = algo.detect(cleanFrame)
+        frame, detections = algo.detect(cleanFrame)
 
         if detections is None or yoloDetections is None:
             continue
@@ -92,7 +92,7 @@ while True:
                  int(testColours[algoNum][2]))
         draw(detections, frame, color)
 
-        results[algoNum] = [0] * max(len(detections), len(yoloDetections))
+        results[algoNum] = [0] * max(len(detections), len(yoloDetections)) #Put 0s for every failed detection
         count = 0
         if len(detections) > 0:
             for box in detections:

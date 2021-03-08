@@ -1,28 +1,28 @@
 ---------------- Test.avi Speed Tests -----------------
 
 HOG     Elapsed time: 0:02:19.340320    frames processed:  795 
- {'BoxType': 'all', 'ReportMedium': None, 'ReportType': None, 'ReportFreq': None, 'FromTime': None, 'ToTime': None, 'BlackAndWhite': False, 'ReduceRes': False} 
+'BlackAndWhite': False, 'ReduceRes': False} 
 
 HOG     Elapsed time: 0:02:19.782034    frames processed:  795 
- {'BoxType': 'all', 'ReportMedium': None, 'ReportType': None, 'ReportFreq': None, 'FromTime': None, 'ToTime': None, 'BlackAndWhite': True, 'ReduceRes': False} 
+'BlackAndWhite': True, 'ReduceRes': False} 
 
 HOG     Elapsed time: 0:02:19.436963    frames processed:  795 
- {'BoxType': 'all', 'ReportMedium': None, 'ReportType': None, 'ReportFreq': None, 'FromTime': None, 'ToTime': None, 'BlackAndWhite': False, 'ReduceRes': True} 
+'BlackAndWhite': False, 'ReduceRes': True} 
 
 Motion  Elapsed time: 0:00:00.601390    frames processed:  795 
- {'BoxType': 'all', 'ReportMedium': None, 'ReportType': None, 'ReportFreq': None, 'FromTime': None, 'ToTime': None, 'BlackAndWhite': False, 'ReduceRes': False} 
+'BlackAndWhite': False, 'ReduceRes': False} 
 
 Motion  Elapsed time: 0:00:00.550526    frames processed:  795 
- {'BoxType': 'all', 'ReportMedium': None, 'ReportType': None, 'ReportFreq': None, 'FromTime': None, 'ToTime': None, 'BlackAndWhite': True, 'ReduceRes': False} 
+'BlackAndWhite': True, 'ReduceRes': False} 
 
 Motion  Elapsed time: 0:00:00.494676    frames processed:  795 
- {'BoxType': 'all', 'ReportMedium': None, 'ReportType': None, 'ReportFreq': None, 'FromTime': None, 'ToTime': None, 'BlackAndWhite': False, 'ReduceRes': True} 
+'BlackAndWhite': False, 'ReduceRes': True} 
 
 Tiny YOLO       Elapsed time: 0:00:54.825311    frames processed:  795 
- {'BoxType': 'all', 'ReportMedium': None, 'ReportType': None, 'ReportFreq': None, 'FromTime': None, 'ToTime': None, 'BlackAndWhite': False, 'ReduceRes': False} 
+'BlackAndWhite': False, 'ReduceRes': False} 
 
 Tiny YOLO       Elapsed time: 0:00:53.753181    frames processed:  795 
- {'BoxType': 'all', 'ReportMedium': None, 'ReportType': None, 'ReportFreq': None, 'FromTime': None, 'ToTime': None, 'BlackAndWhite': True, 'ReduceRes': False} 
+'BlackAndWhite': True, 'ReduceRes': False} 
 
 Tiny YOLO       Elapsed time: 0:00:55.104565    frames processed:  795 
- {'BoxType': 'all', 'ReportMedium': None, 'ReportType': None, 'ReportFreq': None, 'FromTime': None, 'ToTime': None, 'BlackAndWhite': False, 'ReduceRes': True} 
+'BlackAndWhite': False, 'ReduceRes': True} 

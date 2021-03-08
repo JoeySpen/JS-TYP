@@ -14,6 +14,7 @@ from flask import request
 from VisionAlgorithms.Motion import Motion
 from VisionAlgorithms.HOG import HOG
 from VisionAlgorithms.YOLO.YOLO import YOLO
+from VisionAlgorithms.YOLO.TinyYOLO import TinyYOLO
 from OpenSSL import SSL
 # from DiscordReporter import DiscordReporter
 
@@ -48,7 +49,7 @@ time.sleep(1)
 
 t = None
 
-md = YOLO()
+md = Motion()
 
 discordReporter = None
 
@@ -226,7 +227,7 @@ def handle_request():
         elif newType == "bgsub":
             md = SingleMotionDetector(accumWeight=0.1)
         elif newType == "YOLO":
-            md = YOLO()
+            md = TinyYOLO()
 
     updateSettings(request.form)
 

@@ -4979,10 +4979,10 @@ Joey Method (Hybrid)/output.avi
 *.pyc
 *.pyc
 Client/.env
-Client/VisionAlgorithms/YOLO/yolo-coco/yolov3.weights
 Client/static/assets/img/bournemouth.jpg
 Client/static/assets/img/bournemouth2.jpg
 Client/static/assets/img/logo_white.png
 Client/static/assets/img/code_bg.png
 Client/group.bmp
 *.bmp
+Client/VisionAlgorithms/YOLO/yolo-coco/yolov3.weights
