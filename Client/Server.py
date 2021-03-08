@@ -20,6 +20,8 @@ from OpenSSL import SSL
 
 # python Server.py --ip 192.168.56.1 --port 8000
 # python Server.py --ip 127.0.0.1 --port 8000
+# python3 Server.py --ip 192.168.56.1 --port 8000
+# python3 Server.py --ip 127.0.0.1 --port 8000
 # http://camera.butovo.com/mjpg/video.mjpg
 
 # Initialise output frame and a lock to allow
@@ -179,6 +181,7 @@ def getBoxes():
 
 @app.route("/settings")
 def getSettings():
+    global settings
     return settings
 
 @app.route("/video_feed")
