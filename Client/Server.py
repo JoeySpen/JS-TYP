@@ -3,6 +3,7 @@ from imutils.video import VideoStream
 from flask import Response
 from flask import Flask
 from flask import render_template
+from flask import jsonify
 import threading
 import argparse
 import datetime
@@ -182,7 +183,8 @@ def getBoxes():
 @app.route("/settings")
 def getSettings():
     global settings
-    return settings
+    print("Trying to return settings")
+    return jsonify(settings)
 
 @app.route("/video_feed")
 def video_feed():
