@@ -41,7 +41,10 @@
           <h3> Configuration <i class="fas fa-cogs"></i> </h3>
           <!-- Button container -->
           <div class="form-border shadow col-12">
-            <h5> Detection Algorithm </h5>
+            <div class="col-12 container but-col">
+              <h5> <br> Detection Algorithm </h5>
+            </div>
+            
 
             <!-- Motion settings -->
             <div class="col-12 container but-col nopadding">
@@ -148,15 +151,15 @@
 
               <div class="inputGroup">
                 <input id="none" name="BoxType" type="radio" value="none"/>
-                <label for="none" class="inputLabel"> <i class="fas fa-user-alt"></i> None <span class="spanHidden" id="discord"> (Current) </span></label>
+                <label for="none" class="inputLabel"> <i class="fas fa-user-alt"></i> Don't draw boxes <span class="spanHidden" id="discord"> (Current) </span></label>
               </div>
               <div class="inputGroup">
                 <input id="merge" name="BoxType" type="radio" value="merge"/>
-                <label for="merge" class="inputLabel"> <i class="fas fa-portrait"></i> Merge <span class="spanHidden" id="discord"> (Current) </span></label>
+                <label for="merge" class="inputLabel"> <i class="fas fa-portrait"></i> Merge boxes together <span class="spanHidden" id="discord"> (Current) </span></label>
               </div>
               <div class="inputGroup">
                 <input id="all" name="BoxType" type="radio" value="all"/>
-                <label for="all" class="inputLabel"> <i class="fas fa-portrait"></i> Show All <span class="spanHidden" id="discord"> (Current) </span></label>
+                <label for="all" class="inputLabel"> <i class="fas fa-portrait"></i> Draw all boxes <span class="spanHidden" id="discord"> (Current) </span></label>
               </div>
             </div>
            </div>

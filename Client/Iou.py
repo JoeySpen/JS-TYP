@@ -3,6 +3,7 @@ import cv2
 from VisionAlgorithms.Motion import Motion
 from VisionAlgorithms.HOG import HOG
 from VisionAlgorithms.YOLO.YOLO import YOLO
+from VisionAlgorithms.YOLO.TinyYOLO import TinyYOLO
 import numpy as np
 
 
@@ -47,8 +48,16 @@ def draw(detections, frame, colour):
 
 
 # Main
-mvAlgos = [HOG(), Motion()]
-names = ["HOG", "Motion"]
+mvAlgos = [HOG(), HOG(), HOG(), Motion(), Motion(), Motion()]
+mvAlgos[1].updateSetting("BlackAndWhite", True)
+mvAlgos[2].updateSetting("ReduceRes", True)
+
+mvAlgos[4].updateSetting("BlackAndWhite", True)
+mvAlgos[5].updateSetting("ReduceRes", True)
+
+# mvAlgos[7].updateSetting("BlackAndWhite", True)
+# mvAlgos[8].updateSetting("ReduceRes", True)
+names = ["HOG", "HogB+W", "HOGReduceRes", "Motion", "MotionB+W", "MotionReduceRes"]
 YOLO = YOLO()
 testVid = cv2.VideoCapture('testVids/vtest.mp4')
 frame = None

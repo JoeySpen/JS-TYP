@@ -16,10 +16,10 @@ from VisionAlgorithms.Motion import Motion
 from VisionAlgorithms.HOG import HOG
 from VisionAlgorithms.YOLO.YOLO import YOLO
 from VisionAlgorithms.YOLO.TinyYOLO import TinyYOLO
-from OpenSSL import SSL
+import base64
 # from DiscordReporter import DiscordReporter
 
-# python Server.py --ip 192.168.56.1 --port 8000
+# python Server.py --ip 192.168.0.27 --port 8000
 # python Server.py --ip 127.0.0.1 --port 8000
 # python3 Server.py --ip 192.168.56.1 --port 8000
 # python3 Server.py --ip 127.0.0.1 --port 8000
@@ -109,10 +109,10 @@ def visionDetection():
         # #TODO Do this stuff in the respective motion technique
 
         # Grab current timestamp and draw to frame
-        timestamp = datetime.datetime.now()
-        cv2.putText(frame, timestamp.strftime(
-                "%A %d %B %Y %I:%M:%S%p"), (10, frame.shape[0] - 10),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.35, (0, 0, 255), 1)
+        currentTime = datetime.datetime.now()
+        cv2.putText(frame, currentTime.strftime(
+                "%d/%m/%y, %H:%M:%S"), (10, frame.shape[0] - 10),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.30, (0, 255, 0), 1)
 
         # If total frames sufficient to construct background model
         # Continue to process frame
@@ -180,12 +180,6 @@ def getBoxes():
     while True:
         yield box
 
-@app.route("/settings")
-def getSettings():
-    global settings
-    print("Trying to return settings")
-    return jsonify(settings)
-
 @app.route("/video_feed")
 def video_feed():
     # return the response generated along with specific media type
@@ -200,11 +194,25 @@ def single():
         (flag, encodedImage) = cv2.imencode(".jpg", outputFrame)
         return Response(bytearray(encodedImage), mimetype="image/jpg")
 
+# Returns the most recent frame as base64 string
+@app.route("/base64")
+def getBase64():
+    global outputFrame, lock
+    with lock:
+        (flag, encodedImage) = cv2.imencode(".jpg", outputFrame)
+        b64String = base64.b64encode(encodedImage)
+        return Response(b64String, mimetype="text")
+
 
 @app.route("/boxes")
 def boxes():
     global box
     print(box)
+
+@app.route("/settings")
+def getSettings():
+    global settings, lock
+    return jsonify(settings)
 
     # def generate():
     #     lastBox = None
