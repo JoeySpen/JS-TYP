@@ -99,6 +99,11 @@
             <div class="collapse col-12 align-content-center" id="collapseMotion2">
               <p><br> Reporting Channel </p>
               <div class="inputGroup">
+                <input id="noReporting" name="ReportMedium" type="radio" value="noReporting"/>
+                <label for="noReporting" class="inputLabel"><i class="fas fa-volume-mute"></i> No Reporting <span class="spanHidden" id="noReporting"> (Current) </span></label>
+              </div>
+
+              <div class="inputGroup">
                 <input id="discord" name="ReportMedium" type="radio" value="discord"/>
                 <label for="discord" class="inputLabel"><i class="fab fa-discord"></i> Discord<span class="spanHidden" id="discord"> (Current) </span></label>
               </div>
@@ -139,6 +144,7 @@
                 <input id="timer" name="ReportFreq" type="radio" value="timer"/>
                 <label for="timer" class="inputLabel"> <i class="far fa-clock"></i> Every x minutes... <span class="spanHidden" id="discord"> (Current) </span></label>
               </div>
+              <input type="number" id="everyXMinutes" name="everyXMinutes" min="1" max="1440">
             </div>
            </div>
 

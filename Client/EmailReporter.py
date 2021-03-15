@@ -20,7 +20,7 @@ class EmailReporter:
         self.msg["From"] = self.email
         self.msg["To"] = "dragonslash42@gmail.com"
         self.msg["Subject"] = self.subject
-        self.msg.attach(MIMEText('<b>Below is an image from your device</b><br><img src="cid:image1"><br>' + self.footer, 'html'))
+        self.msg.attach(MIMEText('<b>Here if your PiVision report! </b><br><img src="cid:image1"><br>' + self.footer, 'html'))
 
         # Create SSL context
         self.sslContext = ssl.create_default_context()
@@ -30,7 +30,7 @@ class EmailReporter:
                                        self.port, context=self.sslContext)
         self.server.login(self.email, self.password)
 
-    def send(self, inputImage):
+    def send(self, inputImage, recipient):
         # Convert and add image
         # self.img = cv2.imread('image/1.png') # Load test image
         encodedImage = cv2.imencode(".jpg", inputImage)[1].tobytes()
@@ -40,5 +40,4 @@ class EmailReporter:
 
         # Send message
         text = self.msg.as_string()
-        self.server.sendmail(self.email, "dragonslash42@gmail.com",
-                             text)
+        self.server.sendmail(self.email, recipient, text)

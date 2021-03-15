@@ -16,7 +16,9 @@ from VisionAlgorithms.Motion import Motion
 from VisionAlgorithms.HOG import HOG
 from VisionAlgorithms.YOLO.YOLO import YOLO
 from VisionAlgorithms.YOLO.TinyYOLO import TinyYOLO
+from EmailReporter import EmailReporter
 import base64
+import math
 # from DiscordReporter import DiscordReporter
 
 # python Server.py --ip 192.168.0.27 --port 8000
@@ -54,7 +56,7 @@ t = None
 
 md = Motion()
 
-discordReporter = None
+reporter = None
 
 # Algo settings
 minSize = 0
@@ -74,7 +76,9 @@ settings = {
     "FromTime": "None",
     "ToTime": "None",
     "BlackAndWhite": "off",
-    "ReduceRes": "off"
+    "ReduceRes": "off",
+    "everyXMinutes": 1000,
+    "ReportTo": "dragonslash42@gmail.com"
 }
 
 # HTML does not post unticked boxes
@@ -88,7 +92,7 @@ def index():
     return render_template("test2.html")
 
 
-def visionDetection():
+def detection():
     # Grab global references to video stream output and lock
     global vs, outputFrame, lock, box, md
 
@@ -97,10 +101,11 @@ def visionDetection():
     # md = Motion(accumWeight=0.1)
     # md = Motion()
     total = 0
+    lastSent = 0
 
     # Loop over frames from video stream
     while True:
-        # Read next frame from stream, resize convert and blur
+        # Read next frame from stream
         frame = vs.read()
         frame = imutils.resize(frame, width=400)
 
@@ -108,7 +113,7 @@ def visionDetection():
         # gray = cv2.GaussianBlur(gray, (7, 7), 0)
         # #TODO Do this stuff in the respective motion technique
 
-        # Grab current timestamp and draw to frame
+        # Timestamp frame
         currentTime = datetime.datetime.now()
         cv2.putText(frame, currentTime.strftime(
                 "%d/%m/%y, %H:%M:%S"), (10, frame.shape[0] - 10),
@@ -117,36 +122,40 @@ def visionDetection():
         # If total frames sufficient to construct background model
         # Continue to process frame
         if total > frameCount:
-            # motion = md.detect(frame)
             (frame, detections) = md.detect(frame)
 
             if detections is None:
                 continue
 
-            box = detections
+            if settings["BoxType"] == "all":
+                box = detections
+                for detect in detections:
+                    (x, y, w, h) = detect
+                    # box.append((x, y, w, h))
+                    cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 255), 2)
+            elif settings["BoxType"] == "merge" and detections:
+                lowestX = 1000
+                lowestY = 1000
+                maxWidth = 0
+                maxHeight = 0
+                for detect in detections:
+                    (x, y, w, h) = detect
+                    lowestX = min(lowestX, x)
+                    lowestY = min(lowestY, y)
+                    maxWidth = max(maxWidth, x+w)
+                    maxHeight = max(maxHeight, y+h)
+                box = (lowestX, lowestY, maxWidth, maxHeight)
+                cv2.rectangle(frame, (lowestX, lowestY), (maxWidth, maxHeight), (0, 0, 255), 2)
 
-            #print(detections)
+            # Timer Reporting
+            if settings["ReportFreq"] == "timer":
+                if(time.time() - lastSent > settings["everyXMinutes"] * 60):
+                    lastSent = time.time()
+                    reporter.send(frame, settings["ReportTo"])
+                    print("Sent email to ", settings["ReportTo"])
+                #print("email! everyXMinutes:", settings["everyXMinutes"])
 
-            for detect in detections:
-                (x, y, w, h) = detect
-                # box.append((x, y, w, h))
-                cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 255), 2)
-
-            # Check if we found motion
-            # if motion is not None:
-                # Unpack tuple and draw box surrounding motion area
-                # (thresh, (minX, minY, maxX, maxY)) = motion
-                # cv2.rectangle(frame, (minX, minY), (maxX, maxY),
-                #             (0, 0, 255), 2)
-                # box = (minX, minY, maxX, maxY)
-
-        # Update background model and increment total num
-        # of frames read thus far
-        #md.update(frame)  # md.update(gray) #TODO
         total += 1
-
-        # cv2.imshow("feed", frame)
-        # cv2.waitKey(0)
 
         # Acquire lock, set output frame and release lock
         with lock:
@@ -186,6 +195,7 @@ def video_feed():
     return Response(generate(),
                     mimetype="multipart/x-mixed-replace; boundary=frame")
 
+
 # Returns the most recent frame
 @app.route("/single.jpg")
 def single():
@@ -193,6 +203,7 @@ def single():
     with lock:
         (flag, encodedImage) = cv2.imencode(".jpg", outputFrame)
         return Response(bytearray(encodedImage), mimetype="image/jpg")
+
 
 # Returns the most recent frame as base64 string
 @app.route("/base64")
@@ -207,7 +218,8 @@ def getBase64():
 @app.route("/boxes")
 def boxes():
     global box
-    print(box)
+    return Response(str(box), mimetype="text")
+
 
 @app.route("/settings")
 def getSettings():
@@ -231,7 +243,7 @@ def getSettings():
 # Deal with form request to change parameters
 @app.route('/submit', methods=['GET', 'POST'])
 def handle_request():
-    global settings, md
+    global settings, md, reporter
     if(request.form["DetectType"] != settings["DetectType"]):
         newType = request.form["DetectType"]
         if newType == "motion":
@@ -242,6 +254,10 @@ def handle_request():
             md = SingleMotionDetector(accumWeight=0.1)
         elif newType == "YOLO":
             md = TinyYOLO()
+
+    if("ReportMedium" in request.form.keys() and request.form["ReportMedium"] != settings["ReportMedium"]):
+        if(request.form["ReportMedium"] == "email"):
+            reporter = EmailReporter()
 
     updateSettings(request.form)
 
@@ -280,6 +296,9 @@ def updateSettings(form):
             settings[checkBoxKey] = "off"
             md.updateSetting(checkBoxKey, "off")
 
+    if isinstance(settings["everyXMinutes"], str):
+        settings["everyXMinutes"] = int(settings["everyXMinutes"])
+
     return
 
 #TODO 
@@ -301,7 +320,7 @@ if __name__ == '__main__':
                     help="desired port to run the server on [1024-65535]")
     args = vars(argParser.parse_args())
 
-    t = threading.Thread(target=visionDetection)
+    t = threading.Thread(target=detection)
     t.daemon = True
     t.start()
 
