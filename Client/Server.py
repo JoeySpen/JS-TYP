@@ -18,6 +18,7 @@ from VisionAlgorithms.YOLO.YOLO import YOLO
 from VisionAlgorithms.YOLO.TinyYOLO import TinyYOLO
 from VisionAlgorithms.BackgroundSubtraction import BackgroundSubtraction
 from EmailReporter import EmailReporter
+from TwitterReporter import TwitterReporter
 import base64
 import math
 # from DiscordReporter import DiscordReporter
@@ -144,7 +145,7 @@ def detection():
                 if(time.time() - lastSent > settings["everyXMinutes"] * 60):
                     lastSent = time.time()
                     reporter.send(frame, settings["ReportTo"])
-                    print("Sent email to ", settings["ReportTo"])
+                    print("Reported to ", settings["ReportTo"])
                 
 
         total += 1
@@ -238,6 +239,9 @@ def handle_request():
     if("ReportMedium" in request.form.keys() and request.form["ReportMedium"] != settings["ReportMedium"]):
         if(request.form["ReportMedium"] == "email"):
             reporter = EmailReporter()
+        elif(request.form["ReportMedium"]) == "twitter":
+            reporter = TwitterReporter()
+        
 
     updateSettings(request.form)
     return redirect("/")

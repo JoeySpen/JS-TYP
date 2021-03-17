@@ -1,6 +1,8 @@
 from ReporterDiscord import ReporterDiscord
 from EmailReporter import EmailReporter
+from TwitterReporter import TwitterReporter
 import threading
+import cv2
 
 # Reporter = None
 
@@ -17,5 +19,9 @@ import threading
 # while(True):
 #     x = 1+1
 
-repoter = EmailReporter()
+img = cv2.imread('image/3.png')
+
+reporter = TwitterReporter()
+
+reporter.send(img, "OK")
 
