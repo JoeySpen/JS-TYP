@@ -133,7 +133,7 @@ def detection():
                     (x, y, w, h) = detect
                     # box.append((x, y, w, h))
                     cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 255), 2)
-            elif settings["BoxType"] == "merge" and detections:
+            elif settings["BoxType"] == "merge" or settings["BoxType"] == "none" and detections:
                 lowestX = 1000
                 lowestY = 1000
                 maxWidth = 0
@@ -145,7 +145,8 @@ def detection():
                     maxWidth = max(maxWidth, x+w)
                     maxHeight = max(maxHeight, y+h)
                 box = (lowestX, lowestY, maxWidth, maxHeight)
-                cv2.rectangle(frame, (lowestX, lowestY), (maxWidth, maxHeight), (0, 0, 255), 2)
+                if settings["BoxType"] == "merge":
+                    cv2.rectangle(frame, (lowestX, lowestY), (maxWidth, maxHeight), (0, 0, 255), 2)
 
             # Timer Reporting
             if settings["ReportFreq"] == "timer":
@@ -303,11 +304,11 @@ def updateSettings(form):
 
 #TODO 
 # Deal with form request to change parameters
-@app.route('/count', methods=['GET', 'POST'])
+@app.route('/count')
 def getCount():
     global count, lock
     with lock:
-        return count
+        return len(box)
 
 
 # If main

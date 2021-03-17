@@ -4,6 +4,7 @@ from VisionAlgorithms.Motion import Motion
 from VisionAlgorithms.HOG import HOG
 from VisionAlgorithms.YOLO.YOLO import YOLO
 from VisionAlgorithms.YOLO.TinyYOLO import TinyYOLO
+from SingleMotionDetector import SingleMotionDetector
 import numpy as np
 
 
@@ -37,7 +38,7 @@ def getIOU(box1, box2):
 
     return iou
 
-
+# Draws detection to frame in specified colour
 def draw(detections, frame, colour):
     if detections is None:
         return
@@ -47,76 +48,99 @@ def draw(detections, frame, colour):
         cv2.rectangle(frame, (x, y), (x+w, y+h), colour, 2)
 
 
-# Main
-mvAlgos = [HOG(), HOG(), HOG(), Motion(), Motion(), Motion()]
-mvAlgos[1].updateSetting("BlackAndWhite", True)
-mvAlgos[2].updateSetting("ReduceRes", True)
+# Algorithms to test
+mvAlgos = [TinyYOLO()]
 
-mvAlgos[4].updateSetting("BlackAndWhite", True)
-mvAlgos[5].updateSetting("ReduceRes", True)
-
-# mvAlgos[7].updateSetting("BlackAndWhite", True)
-# mvAlgos[8].updateSetting("ReduceRes", True)
-names = ["HOG", "HogB+W", "HOGReduceRes", "Motion", "MotionB+W", "MotionReduceRes"]
+# Algorithm we are testing against
 YOLO = YOLO()
+
+# Vid setup
 testVid = cv2.VideoCapture('testVids/vtest.mp4')
 frame = None
 frameCount = 0
 
+# Colour setup
 np.random.seed(1000)
 yoloColour = (0, 0, 255)
 testColour = (0, 255, 0)
 testColours = np.random.randint(0, 225, size=(len(mvAlgos), 3), dtype="uint8")
 
-print(testColours[0])
+print("Colours:", testColours[0])
 
 
 testVid.release()
 testVid = cv2.VideoCapture('testVids/vtest.mp4')
 frame = None
 
+results = []
+
+for algo in mvAlgos:
+    results.append([])
+
+print(results)
+
 while True:
     ret, frame = testVid.read()
-    cleanFrame = frame.copy()
+    # frame = cv2.resize(frame,(480*2,360*2),fx=0,fy=0, interpolation = cv2.INTER_CUBIC) #Required for HOG detection
+    frameCount += 1
+
+    # Frames to measure
+    if frameCount > 100:
+        break
 
     # End of video
     if not ret:
         print("End of video")
         break
 
+    cleanFrame = frame.copy()
     frame, yoloDetections = YOLO.detect(frame)
     draw(yoloDetections, frame, yoloColour)
 
-    results = [None] * len(mvAlgos)
+    frameResults = [None] * len(mvAlgos)
     algoNum = 0
 
+    # Get detections for each test algorithm
     for algo in mvAlgos:
-        frame, detections = algo.detect(cleanFrame)
+        unusedFrame, detections = algo.detect(cleanFrame)
 
         if detections is None or yoloDetections is None:
             continue
 
         # Draw detections in this algos colour
-        color = (int(testColours[algoNum][0]), int(testColours[algoNum][1]), 
+        color = (int(testColours[algoNum][0]), int(testColours[algoNum][1]),
                  int(testColours[algoNum][2]))
         draw(detections, frame, color)
 
-        results[algoNum] = [0] * max(len(detections), len(yoloDetections)) #Put 0s for every failed detection
-        count = 0
+        # Put 0s for every failed detection
+        frameResults[algoNum] = [0] * max(len(detections), len(yoloDetections)) 
+        detectionNum = 0
+
+        # Find score for each detection
         if len(detections) > 0:
             for box in detections:
                 # best.append(0)
                 for yolobox in yoloDetections:
-                    results[algoNum][count] = max(results[algoNum][count],
+                    frameResults[algoNum][detectionNum] = max(frameResults[algoNum][detectionNum],
                                                   getIOU(box, yolobox))
-                count += 1
+                detectionNum += 1
 
+            # Calculate the score (average) for this specific frame
+            frameAverage = sum(frameResults[algoNum])/len(frameResults[algoNum])
+            # print("Results for this frame: ", frameAverage)
+            
+            # Average of this frame is added to final result
+            results[algoNum].append(frameAverage)
         algoNum += 1
+    cv2.imshow("Frame", frame)
+    cv2.waitKey(0)
 
-        for i, algo in enumerate(mvAlgos):
-            print(names[i], results[i])
+print("Results:\n", results)
 
-    cv2.imshow("frame", frame)
-    cv2.waitKey(1)
+
+for i, algo in enumerate(mvAlgos):
+    # Average of each frame is taken for final score
+    totalScore = sum(results[i])/len(results[i])
+    print("Final score for ", mvAlgos[i].name, "is: ", totalScore)
 
 testVid.release()

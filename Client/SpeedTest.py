@@ -4,6 +4,7 @@ from VisionAlgorithms.Motion import Motion
 from VisionAlgorithms.HOG import HOG
 from VisionAlgorithms.YOLO.YOLO import YOLO
 from VisionAlgorithms.YOLO.TinyYOLO import TinyYOLO
+from SingleMotionDetector import SingleMotionDetector
 
 
 # Draws a list of detections to a frame
@@ -16,21 +17,12 @@ def draw(detections, frame):
         cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 255), 2)
 
 
-mvAlgos = [HOG(), HOG(), HOG(), Motion(), Motion(), Motion(), TinyYOLO(), TinyYOLO(), TinyYOLO()]
-mvAlgos[1].updateSetting("BlackAndWhite", True)
-mvAlgos[2].updateSetting("ReduceRes", True)
-
-mvAlgos[4].updateSetting("BlackAndWhite", True)
-mvAlgos[5].updateSetting("ReduceRes", True)
-
-mvAlgos[7].updateSetting("BlackAndWhite", True)
-mvAlgos[8].updateSetting("ReduceRes", True)
-
+mvAlgos = [HOG()]
 
 testVid = cv2.VideoCapture('testVids/vtest.mp4')
 frame = None
 frameCount = 0
-#HOG = HOG()
+
 
 for algo in mvAlgos:
     testVid.release()

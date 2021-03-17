@@ -20,7 +20,7 @@ class TinyYOLO(YOLO):
         self.ln = [self.ln[i[0] - 1] for i in self.neuralNet.getUnconnectedOutLayers()]
 
         #self.settings["BlackAndWhite"] = False
-        #self.dontChange["BlackAndWhite"] = True     # TODO better black and white toggle...
+        #self.dontChange["BlackAndWhite"] = True   
     
     def updateSetting(self, settingName, settingValue):
         super().updateSetting(settingName, settingValue)

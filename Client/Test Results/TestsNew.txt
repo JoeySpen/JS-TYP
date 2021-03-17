@@ -1,0 +1,16 @@
+-- First Test vid on desktop --
+
+BG Sub  Elapsed time: 0:00:00.791882    frames processed:  795 
+ {'BoxType': 'all', 'ReportMedium': None, 'ReportType': None, 'ReportFreq': None, 'FromTime': None, 'ToTime': None, 'BlackAndWhite': False, 'ReduceRes': False} 
+
+HOG     Elapsed time: 0:02:18.513335    frames processed:  795 
+ {'BoxType': 'all', 'ReportMedium': None, 'ReportType': None, 'ReportFreq': None, 'FromTime': None, 'ToTime': None, 'BlackAndWhite': False, 'ReduceRes': False} 
+
+Motion  Elapsed time: 0:00:00.636297    frames processed:  795 
+ {'BoxType': 'all', 'ReportMedium': None, 'ReportType': None, 'ReportFreq': None, 'FromTime': None, 'ToTime': None, 'BlackAndWhite': False, 'ReduceRes': False} 
+
+Tiny YOLO       Elapsed time: 0:01:04.249067    frames processed:  795 
+ {'BoxType': 'all', 'ReportMedium': None, 'ReportType': None, 'ReportFreq': None, 'FromTime': None, 'ToTime': None, 'BlackAndWhite': False, 'ReduceRes': False} 
+
+YOLO    Elapsed time: 0:09:42.475287    frames processed:  795 
+ {'BoxType': 'all', 'ReportMedium': None, 'ReportType': None, 'ReportFreq': None, 'FromTime': None, 'ToTime': None, 'BlackAndWhite': False, 'ReduceRes': False} 

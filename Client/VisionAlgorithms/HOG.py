@@ -42,7 +42,8 @@ class HOG(VisionAlgorithm):
         image = super().detect(image)
         #gray = cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY)
         #frame1 = cv2.resize(frame1, (400, 400))
-        image = cv2.resize(image, (500, 500))
+        # image = cv2.resize(image,(480*2,360*2),fx=0,fy=0, interpolation = cv2.INTER_CUBIC)
+        # image = cv2.resize(image, (500, 500))
         boxes, weights = self.hog.detectMultiScale(image, winStride=(2, 2),
                                                    padding=(1, 1), scale=4)
         return image, boxes
@@ -60,9 +61,9 @@ class HOG(VisionAlgorithm):
         # Corners? :)
 
         # Changing winStride helped ALOT here
-        #(rects, weights) = self.hog.detect(resizedImage)
+        # (rects, weights) = self.hog.detect(resizedImage)
         # (rects, weights) = self.hog.detectMultiScale(image, winStride=(1, 1), padding=(8, 8), scale=1.05) #works... OK ish
-        (rects, weights) = self.hog.detectMultiScale(resizedImage, winStride=(2, 2), padding=(8, 8), scale=1) #works... OK ish
+        (rects, weights) = self.hog.detectMultiScale(resizedImage, winStride=(2, 2), padding=(8, 8), scale=1) #works... OK ish my fave
         # (rects, weights) = self.hog.detectMultiScale(image, winStride=(4, 4), padding=(8, 8), scale=1.05)
 
         #print("compute:", self.hog.compute(resizedImage), "compute end")
