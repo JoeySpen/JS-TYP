@@ -5,7 +5,7 @@ import cv2
 from VisionAlgorithms.VisionAlgorithm import VisionAlgorithm
 
 
-class SingleMotionDetector(VisionAlgorithm):
+class BackgroundSubtraction(VisionAlgorithm):
     def __init__(self, accumWeight=0.5):
         super().__init__()
         # store the accumulated weight factor

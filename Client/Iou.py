@@ -4,7 +4,7 @@ from VisionAlgorithms.Motion import Motion
 from VisionAlgorithms.HOG import HOG
 from VisionAlgorithms.YOLO.YOLO import YOLO
 from VisionAlgorithms.YOLO.TinyYOLO import TinyYOLO
-from SingleMotionDetector import SingleMotionDetector
+from VisionAlgorithms.BackgroundSubtraction import BackgroundSubtraction
 import numpy as np
 
 

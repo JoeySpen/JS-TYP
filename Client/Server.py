@@ -1,9 +1,10 @@
-from SingleMotionDetector import SingleMotionDetector
 from imutils.video import VideoStream
 from flask import Response
 from flask import Flask
 from flask import render_template
 from flask import jsonify
+from flask import request
+from flask import redirect
 import threading
 import argparse
 import datetime
@@ -11,11 +12,11 @@ import imutils
 import time
 import cv2
 from copy import deepcopy
-from flask import request
 from VisionAlgorithms.Motion import Motion
 from VisionAlgorithms.HOG import HOG
 from VisionAlgorithms.YOLO.YOLO import YOLO
 from VisionAlgorithms.YOLO.TinyYOLO import TinyYOLO
+from VisionAlgorithms.BackgroundSubtraction import BackgroundSubtraction
 from EmailReporter import EmailReporter
 import base64
 import math
@@ -46,10 +47,8 @@ box = (0, 0, 0, 0)
 # Minimum size for contours
 minSize = 900
 
-# Initialize the video stream and allow camera to warmup
-# vs = VideoStream(usePiCamera=1).start()
+# Create video stream
 vs = VideoStream(src=0).start()
-# vs = cv2.VideoCapture(0)
 time.sleep(1)
 
 t = None
@@ -82,7 +81,7 @@ settings = {
 }
 
 # HTML does not post unticked boxes
-# So if these aren't in the post, disable the setting
+# So if the following aren't in the post, disable the setting
 checkBoxKeys = ["ReduceRes", "BlackAndWhite"]
 
 
@@ -96,22 +95,14 @@ def detection():
     # Grab global references to video stream output and lock
     global vs, outputFrame, lock, box, md
 
-    # Initialise motion detector and number of frames
-    # md = SingleMotionDetector(accumWeight=0.1)
-    # md = Motion(accumWeight=0.1)
-    # md = Motion()
     total = 0
     lastSent = 0
 
     # Loop over frames from video stream
     while True:
-        # Read next frame from stream
+        # Get next frame
         frame = vs.read()
         frame = imutils.resize(frame, width=400)
-
-        # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        # gray = cv2.GaussianBlur(gray, (7, 7), 0)
-        # #TODO Do this stuff in the respective motion technique
 
         # Timestamp frame
         currentTime = datetime.datetime.now()
@@ -120,7 +111,7 @@ def detection():
                 cv2.FONT_HERSHEY_SIMPLEX, 0.30, (0, 255, 0), 1)
 
         # If total frames sufficient to construct background model
-        # Continue to process frame
+        # Continue to process frame TODO remove
         if total > frameCount:
             (frame, detections) = md.detect(frame)
 
@@ -154,7 +145,7 @@ def detection():
                     lastSent = time.time()
                     reporter.send(frame, settings["ReportTo"])
                     print("Sent email to ", settings["ReportTo"])
-                #print("email! everyXMinutes:", settings["everyXMinutes"])
+                
 
         total += 1
 
@@ -227,19 +218,6 @@ def getSettings():
     global settings, lock
     return jsonify(settings)
 
-    # def generate():
-    #     lastBox = None
-    #     while True:
-    #         global box
-    #         if lastBox == box:
-    #             break
-    #         rsp = '{0[0]},{0[1]},{0[2]},{0[3]}'.format(box)
-    #         lastBox = deepcopy(box)
-    #         yield rsp
-    # val = getBoxes().__next__()
-    # global box
-    # return Response(rsp, mimetype="text")
-    return Response(str(box), mimetype="text")
 
 # Deal with form request to change parameters
 @app.route('/submit', methods=['GET', 'POST'])
@@ -252,17 +230,17 @@ def handle_request():
         elif newType == "hog":
             md = HOG()
         elif newType == "bgsub":
-            md = SingleMotionDetector(accumWeight=0.1)
+            md = BackgroundSubtraction(accumWeight=0.1)
         elif newType == "YOLO":
-            md = TinyYOLO()
+            md = YOLO()
+
 
     if("ReportMedium" in request.form.keys() and request.form["ReportMedium"] != settings["ReportMedium"]):
         if(request.form["ReportMedium"] == "email"):
             reporter = EmailReporter()
 
     updateSettings(request.form)
-
-    #print("form: ", request.form)
+    return redirect("/")
     return index()
 
 
