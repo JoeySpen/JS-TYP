@@ -34,18 +34,13 @@ import math
 outputFrame = None
 lock = threading.Lock()
 
-# # Https
-# context = SSL.Context(SSL.PROTOCOL_TLSv1_2)
-# context.use_privatekey_file('server.key')
-# context.use_certificate_file('server.crt')
-
-# Initialize a flask object
+# Initialize flask
 app = Flask(__name__)
 
 # Initialize boxes
 box = (0, 0, 0, 0)
 
-# Minimum size for contours
+# Min size for contours
 minSize = 900
 
 # Create video stream
@@ -244,9 +239,7 @@ def handle_request():
     return index()
 
 
-# TODO async locks
-# TODO Do I even need to save settings here? Maybe put all this in VisionAlgorithm
-# And when clientside js requests it send it from the algo
+# Updates server and MV algo to match incoming settings
 def updateSettings(form):
     global settings, checkBoxKeys
     print(form)
@@ -256,8 +249,6 @@ def updateSettings(form):
         return
 
     for key, value in form.items():
-        # print("Key: ", key, " value: ", value)
-
         # Invalid key
         if key not in settings:
             print("Invalid setting key!?")
@@ -280,8 +271,8 @@ def updateSettings(form):
 
     return
 
-#TODO 
-# Deal with form request to change parameters
+
+# Provides the number of current detections
 @app.route('/count')
 def getCount():
     global count, lock
@@ -289,9 +280,9 @@ def getCount():
         return len(box)
 
 
-# If main
+# Spawns main thread and starts flask app
 if __name__ == '__main__':
-    # Construct the argument parser and parse command line arguments
+    # Get args
     argParser = argparse.ArgumentParser()
     argParser.add_argument("-i", "--ip", type=str, required=True,
                     help="desired ip to run the server on")
@@ -303,7 +294,7 @@ if __name__ == '__main__':
     t.daemon = True
     t.start()
 
-    # Start the flask app
+    # Start flask
     app.run(host=args["ip"], port=args["port"], debug=True,
             threaded=True, use_reloader=False)
 
