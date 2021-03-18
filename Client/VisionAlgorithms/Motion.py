@@ -21,7 +21,14 @@ class Motion(VisionAlgorithm):
         if self.prevImage is None:
             self.prevImage = newImage
             return newImage, None
-        diff = cv2.absdiff(self.prevImage, newImage)
+
+        try:
+            diff = cv2.absdiff(self.prevImage, newImage)
+        except cv2.error:
+            self.prevImage = newImage.copy()
+            print("Caught error in Motion, were images different sizes?")
+            return newImage, None
+
         self.prevImage = newImage.copy()
         # frame1 = image.copy()
         if not self.settings["BlackAndWhite"]:
