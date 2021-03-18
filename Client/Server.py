@@ -111,44 +111,40 @@ def detection():
                 "%d/%m/%y, %H:%M:%S"), (10, frame.shape[0] - 10),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.30, (0, 255, 0), 1)
 
-        # If total frames sufficient to construct background model
-        # Continue to process frame TODO remove
-        if total > frameCount:
-            (frame, detections) = md.detect(frame)
+        # Get detections
+        (frame, detections) = md.detect(frame)
 
-            if detections is None:
-                continue
+        if detections is None:
+            continue
 
-            if settings["BoxType"] == "all":
-                box = detections
-                for detect in detections:
-                    (x, y, w, h) = detect
-                    # box.append((x, y, w, h))
-                    cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 255), 2)
-            elif settings["BoxType"] == "merge" or settings["BoxType"] == "none" and detections:
-                lowestX = 1000
-                lowestY = 1000
-                maxWidth = 0
-                maxHeight = 0
-                for detect in detections:
-                    (x, y, w, h) = detect
-                    lowestX = min(lowestX, x)
-                    lowestY = min(lowestY, y)
-                    maxWidth = max(maxWidth, x+w)
-                    maxHeight = max(maxHeight, y+h)
-                box = (lowestX, lowestY, maxWidth, maxHeight)
-                if settings["BoxType"] == "merge":
-                    cv2.rectangle(frame, (lowestX, lowestY), (maxWidth, maxHeight), (0, 0, 255), 2)
+        if settings["BoxType"] == "all":
+            box = detections
+            for detect in detections:
+                (x, y, w, h) = detect
+                cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 0, 255), 2)
 
-            # Timer Reporting
-            if settings["ReportFreq"] == "timer":
-                if(time.time() - lastSent > settings["everyXMinutes"] * 60):
-                    lastSent = time.time()
-                    reporter.send(frame, settings["ReportTo"])
-                    print("Reported to ", settings["ReportTo"])
-                
+        elif (settings["BoxType"] == "merge" or settings["BoxType"] == "none") and len(detections) > 0:
+            lowestX = 1000
+            lowestY = 1000
+            maxWidth = 0
+            maxHeight = 0
+            for detect in detections:
+                (x, y, w, h) = detect
+                lowestX = min(lowestX, x)
+                lowestY = min(lowestY, y)
+                maxWidth = max(maxWidth, x+w)
+                maxHeight = max(maxHeight, y+h)
+            box = (lowestX, lowestY, maxWidth, maxHeight)
+            if settings["BoxType"] == "merge":
+                cv2.rectangle(frame, (lowestX, lowestY), (maxWidth, maxHeight), (0, 0, 255), 2)
 
-        total += 1
+        # Timer Reporting
+        if settings["ReportFreq"] == "timer":
+            if(time.time() - lastSent > settings["everyXMinutes"] * 60):
+                lastSent = time.time()
+                reporter.send(frame, settings["ReportTo"])
+                print("Reported to ", settings["ReportTo"])
+
 
         # Acquire lock, set output frame and release lock
         with lock:
