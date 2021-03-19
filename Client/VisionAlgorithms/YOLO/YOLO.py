@@ -21,7 +21,6 @@ class YOLO(VisionAlgorithm):
         self.thresMin = 0.3
         #self.settings["BlackAndWhite"] = True
         #self.dontChange["BlackAndWhite"] = True     # TODO better black and white toggle...
-        
 
         # Load the labels
         self.labels = open(self.labelLoc).read().strip().split("\n")
@@ -32,9 +31,7 @@ class YOLO(VisionAlgorithm):
 
         self.neuralNet = cv2.dnn.readNetFromDarknet(self.cfgLoc, self.weightsLoc)
 
-        #(H, W) = frame1.shape[:2]
-
-        # Get output layer names we need from YOLO
+        # Layer names
         self.ln = self.neuralNet.getLayerNames()
         self.ln = [self.ln[i[0] - 1] for i in self.neuralNet.getUnconnectedOutLayers()]
 
@@ -48,7 +45,6 @@ class YOLO(VisionAlgorithm):
 
         (H, W) = image.shape[:2]
 
-        #blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (416, 416), swapRB=True, crop=False)
         blob = cv2.dnn.blobFromImage(image, 1 / 255.0, (416, 416), crop=False)
         self.neuralNet.setInput(blob)
         layerOutputs = self.neuralNet.forward(self.ln)
@@ -75,7 +71,7 @@ class YOLO(VisionAlgorithm):
                     x = int(bCentreX - (bWidth/2))
                     y = int(bCentreY - (bHeight/2))
 
-                    # Add box, confidences and ID
+                    # Add box confidences and ID
                     boxes.append([x, y, int(bWidth), int(bHeight)])
                     confidences.append(float(confidence))
                     classIDs.append(classID)
