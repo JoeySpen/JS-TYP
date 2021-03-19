@@ -20,7 +20,7 @@ class EmailReporter:
         self.msg["From"] = self.email
         self.msg["To"] = "dragonslash42@gmail.com"
         self.msg["Subject"] = self.subject
-        self.msg.attach(MIMEText('<b>Here if your PiVision report! </b><br><img src="cid:image1"><br>' + self.footer, 'html'))
+        self.msg.attach(MIMEText('<b>Here is your PiVision report! </b><br><img src="cid:image1"><br>' + self.footer, 'html'))
 
         # Create SSL context
         self.sslContext = ssl.create_default_context()
