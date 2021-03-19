@@ -29,8 +29,7 @@ import math
 # python3 Server.py --ip 127.0.0.1 --port 8000
 # http://camera.butovo.com/mjpg/video.mjpg
 
-# Initialise output frame and a lock to allow
-# thread safe exchange of output frames
+# Initialise output frame and lock
 outputFrame = None
 lock = threading.Lock()
 
@@ -84,7 +83,7 @@ checkBoxKeys = ["ReduceRes", "BlackAndWhite"]
 @app.route("/")
 def index():
     # Return the rendered template
-    return render_template("test2.html")
+    return render_template("index.html")
 
 
 def detection():
