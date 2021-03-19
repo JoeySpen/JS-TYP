@@ -1,1 +1,0 @@
-# https://realpython.com/twitter-bot-python-tweepy/#using-tweepy

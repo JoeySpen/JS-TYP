@@ -8,7 +8,7 @@ class VisionInterface:
 
     def getFrame(self) -> int:
         pass
-    
+
     # Return all boxes and their positions, useful for hitboxes?
     def getBoxes(self) -> int:
         pass
